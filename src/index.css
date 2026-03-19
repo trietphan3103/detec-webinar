@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Manrope", sans-serif;
+  
+  --color-primary: #1843e2;
+  --color-primary-light: #396ecd;
+  --color-accent-sky: #8acdff;
+  --color-accent-beige: #eaca8b;
+  --color-background-dark: #0A0A0B;
+  --color-surface-dark: #161618;
+}
+
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+  
+  body {
+    @apply font-sans text-slate-900 selection:bg-primary/30;
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .hero-image-frame {
+    position: relative;
+    border: 12px solid var(--color-primary);
+    border-radius: 40px;
+    border-bottom-right-radius: 0;
+  }
+
+  .hero-image-frame::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    right: -12px;
+    width: 80px;
+    height: 80px;
+    background: var(--color-background-dark);
+    border-top-left-radius: 40px;
+  }
+
+  .curved-mask {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 85% 75%, 85% 100%, 0% 100%);
+  }
+
+  .bling-text {
+    background: linear-gradient(
+      to right,
+      #396ecd 20%,
+      #8acdff 40%,
+      #eaca8b 60%,
+      #396ecd 80%
+    );
+    background-size: 200% auto;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: shine 3s linear infinite;
+    text-shadow: 0 0 10px rgba(138, 205, 255, 0.3);
+  }
+
+  @keyframes shine {
+    to {
+      background-position: 200% center;
+    }
+  }
+}
