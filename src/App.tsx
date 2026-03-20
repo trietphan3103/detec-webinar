@@ -196,41 +196,24 @@ const Countdown = () => {
   );
 };
 
-const SpeakerCard = ({ name, role, description, image }: { name: string, role: string, description: string, image: string }) => {
-  const items = description.split(' · ').map(item => item.trim().replace(/^"|"$/g, ''));
-  const isList = items.length > 1;
-
-  return (
-    <motion.div
-      whileHover={{ y: -10 }}
-      className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]"
-    >
-      <div className="aspect-square rounded-xl overflow-hidden mb-8 shrink-0">
-        <img src={image} alt={name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-      </div>
-      <h3 className="text-2xl font-bold text-slate-900 mb-1">{name}</h3>
-      <p className="text-base text-primary font-semibold mb-4">{role}</p>
-      
-      <div className="flex-grow">
-        {isList ? (
-          <ul className="space-y-3 mb-6">
-            {items.map((item, idx) => (
-              <li key={idx} className="flex gap-3 text-slate-600 text-base leading-relaxed group/item">
-                <div className="mt-1 shrink-0">
-                  <CheckCircle className="w-4 h-4 text-primary" />
-                </div>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-slate-500 text-base leading-relaxed mb-6">"{description}"</p>
-        )}
-      </div>
-
-    </motion.div>
-  );
-};
+const SpeakerCard = ({ name, role, description, image, quote }: { name: string, role: string, description: string, image: string, quote?: string }) => (
+  <motion.div
+    whileHover={{ y: -6 }}
+    className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]"
+  >
+    <div className="aspect-square rounded-xl overflow-hidden mb-6 shrink-0">
+      <img src={image} alt={name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+    </div>
+    <h3 className="text-xl font-bold text-slate-900 mb-1">{name}</h3>
+    <p className="text-sm text-primary font-semibold mb-4">{role}</p>
+    <p className="text-slate-500 text-sm leading-relaxed mb-4 flex-grow">{description}</p>
+    {quote && (
+      <blockquote className="border-l-2 border-primary/40 pl-4 mt-auto">
+        <p className="text-slate-600 text-sm leading-relaxed italic">{quote}</p>
+      </blockquote>
+    )}
+  </motion.div>
+);
 
 const caseImages = [
   { src: '/images/case-1.png', label: 'Ca lâm sàng #1' },
@@ -433,6 +416,96 @@ export default function App() {
         </div>
       </section>
 
+      {/* SECTION 0: MARKET CONTEXT */}
+      <section className="py-16 md:py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-12 gap-8 lg:gap-16 items-center">
+            <div className="col-span-12 lg:col-span-6">
+              <h2 className="font-headline text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
+                Thị trường phục hình thẩm mỹ đang đặt ra những câu hỏi mới
+              </h2>
+              <p className="text-slate-500 text-lg md:text-xl leading-relaxed mb-10">
+                Buổi tối 03/04 là nơi chúng ta cùng nhìn vào bức tranh đó. Bằng số liệu thật. Từ người đã làm.
+              </p>
+              <div className="space-y-0 border-t border-slate-200">
+                {[
+                  { text: 'Bệnh nhân ngày càng hỏi: "Có cách nào không mài răng không?"', highlight: 'Đây không phải yêu cầu vô lý. Đây là xu hướng toàn cầu.' },
+                  { text: 'Phục hình bền vững dài hạn đang trở thành tiêu chuẩn mới.', highlight: 'Phân khúc cao cấp sẵn sàng trả giá cao hơn cho giải pháp xâm lấn tối thiểu.' },
+                  { text: 'Những bác sĩ nhận ra điều này sớm đang định vị lại phòng khám.', highlight: 'Đây là cơ hội, không phải áp lực.' },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    className="py-6 border-b border-slate-200"
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.12, duration: 0.45 }}
+                    viewport={{ once: true }}
+                  >
+                    <p className="text-slate-700 text-lg md:text-xl leading-relaxed font-medium">
+                      {item.text}{' '}
+                      <span className="font-bold text-slate-900">{item.highlight}</span>
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            <div className="col-span-12 lg:col-span-6">
+              {/* Market data visualization */}
+              <div className="rounded-[28px] bg-slate-950 p-6 md:p-8 shadow-2xl overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-56 h-56 rounded-full bg-primary/20 blur-3xl" />
+                <p className="text-xs font-bold tracking-widest text-primary-light uppercase mb-6">Thị trường du lịch nha khoa toàn cầu</p>
+
+                {/* Big stat */}
+                <div className="mb-7">
+                  <p className="text-6xl md:text-7xl font-black text-white leading-none mb-2">$43.9<span className="text-3xl font-bold text-primary-light ml-1">tỷ</span></p>
+                  <p className="text-slate-400 text-base">Dự báo đến 2030 · Grand View Research</p>
+                </div>
+
+                {/* Growth rate */}
+                <div className="flex items-center gap-4 bg-white/8 rounded-2xl px-5 py-4 mb-6 border border-white/15">
+                  <span className="text-3xl font-black text-emerald-400">22%</span>
+                  <div>
+                    <p className="text-white font-bold text-base">CAGR hàng năm</p>
+                    <p className="text-slate-300 text-sm">Tăng trưởng nhanh nhất trong nha khoa</p>
+                  </div>
+                </div>
+
+                {/* Country comparison */}
+                <div className="space-y-4 mb-6">
+                  <p className="text-sm font-bold text-slate-300 uppercase tracking-wider">Đối thủ khu vực (2023 → 2030)</p>
+                  {[
+                    { country: '🇹🇭 Thái Lan', now: '777tr USD', future: '3.24 tỷ', pct: 80 },
+                    { country: '🇨🇳 Trung Quốc', now: '763tr USD', future: '3.24 tỷ', pct: 80 },
+                  ].map((item) => (
+                    <div key={item.country}>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-white font-semibold text-sm">{item.country}</span>
+                        <span className="text-slate-300 text-sm">{item.now} → <span className="text-primary-light font-black">{item.future}</span></span>
+                      </div>
+                      <div className="h-2.5 rounded-full bg-white/10 overflow-hidden">
+                        <motion.div
+                          className="h-full rounded-full bg-gradient-to-r from-primary to-primary-light"
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${item.pct}%` }}
+                          transition={{ duration: 1, ease: 'easeOut' }}
+                          viewport={{ once: true }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* VN opportunity */}
+                <div className="bg-primary/25 border border-primary/40 rounded-2xl px-5 py-4">
+                  <p className="text-white font-black text-base mb-1">🇻🇳 Việt Nam - Cơ hội chưa được khai thác</p>
+                  <p className="text-slate-200 text-sm leading-relaxed">Chi phí cạnh tranh + tay nghề cao. Ai chuẩn hóa trước, người đó thắng.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* SECTION 1: PAIN HOOK */}
       <section className="py-16 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -520,12 +593,97 @@ export default function App() {
             </div>
             <div className="col-span-12 lg:col-span-7">
               <div className="relative">
-                <div className="rounded-[28px] overflow-hidden aspect-video shadow-2xl shadow-slate-200/50">
-                  <img
-                    alt="SmartVeneer Product"
-                    className="w-full h-full object-cover"
-                    src="/images/smartveneer-product.jpg"
-                  />
+                {/* Economics Card */}
+                <div className="rounded-[28px] bg-white shadow-2xl shadow-slate-200/60 border border-slate-100 p-6 md:p-8 overflow-hidden">
+                  {/* Card header */}
+                  <div className="flex items-center gap-3 mb-7">
+                    <div className="w-2 h-7 rounded-full bg-primary" />
+                    <p className="text-sm font-bold tracking-widest text-slate-400 uppercase">Bài toán kinh tế SmartVeneer</p>
+                  </div>
+
+                  {/* Per-case breakdown */}
+                  <div className="mb-8">
+                    <p className="text-base font-semibold text-slate-500 mb-5">Cấu trúc 1 ca (20 răng Opal):</p>
+                    <div className="space-y-4">
+                      {/* Doanh thu */}
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="font-semibold text-slate-700 text-base">Doanh thu</span>
+                          <span className="font-bold text-slate-900 text-base">100.000.000đ</span>
+                        </div>
+                        <div className="h-3.5 rounded-full bg-slate-100 overflow-hidden">
+                          <motion.div
+                            className="h-full rounded-full bg-gradient-to-r from-primary-light to-primary"
+                            initial={{ width: 0 }}
+                            whileInView={{ width: '100%' }}
+                            transition={{ duration: 0.8, ease: 'easeOut' }}
+                            viewport={{ once: true }}
+                          />
+                        </div>
+                      </div>
+                      {/* Chi phí vật liệu */}
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="font-semibold text-slate-500 text-base">Chi phí vật liệu DETEC</span>
+                          <span className="font-bold text-slate-500 text-base">22.000.000đ</span>
+                        </div>
+                        <div className="h-3.5 rounded-full bg-slate-100 overflow-hidden">
+                          <motion.div
+                            className="h-full rounded-full bg-slate-300"
+                            initial={{ width: 0 }}
+                            whileInView={{ width: '22%' }}
+                            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
+                            viewport={{ once: true }}
+                          />
+                        </div>
+                      </div>
+                      {/* Lợi nhuận */}
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="font-bold text-emerald-700 text-base">Lợi nhuận thuần / ca</span>
+                          <span className="font-black text-emerald-600 text-lg">78.000.000đ ✓</span>
+                        </div>
+                        <div className="h-3.5 rounded-full bg-emerald-50 overflow-hidden">
+                          <motion.div
+                            className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500"
+                            initial={{ width: 0 }}
+                            whileInView={{ width: '78%' }}
+                            transition={{ duration: 0.9, ease: 'easeOut', delay: 0.4 }}
+                            viewport={{ once: true }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t border-slate-100 mb-7" />
+
+                  {/* Monthly scale */}
+                  <div className="mb-6">
+                    <p className="text-base font-semibold text-slate-500 mb-4">Nhân lên theo tháng:</p>
+                    <div className="space-y-2">
+                      {[
+                        { label: '1 ca / tháng', value: '78.000.000đ', highlight: false },
+                        { label: '5 ca / tháng', value: '390.000.000đ', highlight: false },
+                        { label: '10 ca / tháng', value: '780.000.000đ', highlight: true },
+                      ].map((item) => (
+                        <div
+                          key={item.label}
+                          className={`flex items-center justify-between px-5 py-3 rounded-xl ${item.highlight ? 'bg-primary' : 'bg-slate-50'}`}
+                        >
+                          <span className={`text-base font-medium ${item.highlight ? 'text-white/80' : 'text-slate-500'}`}>{item.label}</span>
+                          <span className={`text-lg font-black ${item.highlight ? 'text-white' : 'text-slate-900'}`}>{item.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Case study badge */}
+                  <div className="bg-slate-50 rounded-xl px-5 py-4 border-l-4 border-amber-400">
+                    <p className="text-sm font-bold text-slate-800 mb-0.5">Case study — Dentisan Lab</p>
+                    <p className="text-sm text-slate-600">10 ca/tháng, lợi nhuận thuần <span className="font-black text-slate-900">780 triệu đồng</span>. Số liệu từ phòng khám đang vận hành.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -541,34 +699,39 @@ export default function App() {
           </h2>
           <div className="flex flex-wrap justify-center gap-8">
             <SpeakerCard
-              name="Chuyên Gia Vũ Đề"
+              name="Chuyên gia Vũ Đề"
               role="Sáng lập DETEC Dental Lab"
-              description="30 năm ngành labo · Thành viên Hiệp hội Labo Nha khoa Quốc gia Hoa Kỳ (NADL) — tổ chức nghề nghiệp lớn nhất ngành labo nha khoa tại Mỹ · Tác giả sáng chế vi chốt cơ học Zirconia độc quyền"
+              description="30 năm trong ngành labo. Thành viên Hiệp hội Labo Nha khoa Hoa Kỳ."
               image="/images/speaker-vu-de.jpg"
+              quote="Tác giả sáng chế độc quyền: vi chốt cơ học Zirconia, chưa có đơn vị nào khác tại Việt Nam."
             />
-            <SpeakerCard 
-              name="Thầy Thuốc Nhân Dân, Tiến Sĩ, Bác Sĩ Lê Hưng"
-              role="Tiến sĩ Y học"
-              description="Tốt nghiệp Răng Hàm Mặt 1991 · Tiến sĩ 2003 · Thầy thuốc Nhân dân 2017 · Đào tạo tại Baltimore Dental School, Hàn Quốc, Nhật Bản"
+            <SpeakerCard
+              name="Tiến sĩ, Bác sĩ Lê Hưng - Thầy thuốc Nhân dân"
+              role="Lâm sàng và đồng phát triển"
+              description="Tốt nghiệp Răng Hàm Mặt 1991. Tiến sĩ 2003. Thầy thuốc Nhân dân 2017. Đào tạo tại Baltimore Dental School, Hàn Quốc, Nhật Bản."
               image="/images/speaker-le-hung.jpg"
+              quote="Bác sĩ đầu tiên tự thực hiện kỹ thuật này trên chính hàm răng của mình."
             />
             <SpeakerCard
               name="Chị Khánh Chi"
               role="Giám đốc Dentisan Lab"
-              description="Người trực tiếp vận hành mô hình SmartVeneer: 10 ca/tháng, lợi nhuận 780 triệu/tháng"
+              description="Người trực tiếp vận hành mô hình SmartVeneer thực chiến tại phòng khám."
               image="/images/speaker-khanh-chi.jpg"
+              quote="10 ca/tháng — 780 triệu lợi nhuận thuần. Số liệu thật, từ phòng khám đang chạy."
             />
             <SpeakerCard
-              name="BS Vương Tiến Thịnh"
+              name="Bác sĩ Vương Tiến Thịnh"
               role="Bác sĩ thực chiến lâm sàng"
-              description="Bác sĩ đang triển khai SmartVeneer tại phòng khám · Chia sẻ từ ca đầu tiên đến quy trình chuẩn hóa"
+              description="Bác sĩ đang triển khai SmartVeneer tại phòng khám. Chia sẻ từ ca đầu tiên đến quy trình chuẩn hóa."
               image="/images/speaker-vuong-tin-thinh.jpg"
+              quote="Không lý thuyết. Đây là những gì tôi làm thật, sai thật, và rút ra được sau mỗi ca."
             />
             <SpeakerCard
               name="MC Duy Nguyễn"
-              role="Founder & CEO Next Step Group"
-              description="Dẫn dắt toàn bộ chương trình"
+              role="Góc nhìn khách hàng"
+              description="Không phải chuyên gia kỹ thuật. Là người trực tiếp trải nghiệm SmartVeneer trên chính hàm răng của mình."
               image="/images/speaker-duy-nguyen.jpg"
+              quote="Anh đặt câu hỏi từ góc độ bệnh nhân: những gì khách hàng của bạn đang thực sự muốn biết."
             />
           </div>
         </div>
@@ -579,7 +742,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-8">
           <div className="text-center mb-20">
             <h2 className="font-headline text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-white via-[#eaca8b] to-white bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(234,202,139,0.5)]">
-              Lộ trình 2 tiếng — không có phần nào thừa
+              Lộ trình 2 tiếng, không có phần nào thừa
             </h2>
             <p className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-sm text-white/80 text-base font-medium px-5 py-2.5 rounded-full mt-2">
               📧 Zoom link gửi qua email trước 18:00 ngày 03/04
@@ -587,13 +750,13 @@ export default function App() {
           </div>
           <div className="space-y-4">
             <AgendaItem index={0} time="19:55–20:10" title="Đón tiếp & kết nối" description="Chuẩn bị kỹ thuật và giao lưu đầu giờ." />
-            <AgendaItem index={1} time="20:10–20:15" title="Khai mạc" description="MC Duy Nguyễn dẫn dắt chương trình." />
-            <AgendaItem index={2} time="20:15–20:40" title="Thị trường đang phân hóa — Phòng khám nào hành động trước sẽ dẫn đầu" description="Chuyên Gia Vũ Đề chia sẻ tầm nhìn chiến lược." />
-            <AgendaItem index={3} time="20:40–21:10" title="SmartVeneer — Từ vật liệu đến lâm sàng" description="Tiến Sĩ, Bác Sĩ Lê Hưng đi sâu vào chuyên môn." />
+            <AgendaItem index={1} time="20:10–20:15" title="Khai mạc" description="Duy Nguyễn dẫn dắt chương trình." />
+            <AgendaItem index={2} time="20:15–20:40" title="Thị trường đang phân hóa: Phòng khám nào hành động trước sẽ dẫn đầu" description="Chuyên gia Vũ Đề chia sẻ tầm nhìn chiến lược." />
+            <AgendaItem index={3} time="20:40–21:10" title="SmartVeneer: Từ vật liệu đến lâm sàng" description="Tiến sĩ, Bác sĩ Lê Hưng đi sâu vào chuyên môn." />
             <AgendaItem index={4} time="21:10–21:25" title="Bài toán kinh tế của 1 ca SmartVeneer tại phòng khám" description="Chị Khánh Chi phân tích con số thực tế." highlight />
             <AgendaItem index={5} time="21:25–21:40" title="Thực chiến từ phòng khám đã triển khai" description="Bác Sĩ Vương Tiến Thịnh chia sẻ kinh nghiệm thực tế." highlight />
             <AgendaItem index={6} time="21:40–21:45" title="Hệ sinh thái đồng hành DETEC" description="Chuyên Gia Vũ Đề giới thiệu các giải pháp hỗ trợ." />
-            <AgendaItem index={7} time="21:45–22:00" title="Hỏi đáp trực tiếp + Quà ưu đãi đặc biệt dành riêng người tham dự live" description="MC Duy Nguyễn điều phối phần thảo luận và công bố quà tặng." gold />
+            <AgendaItem index={7} time="21:45–22:00" title="Hỏi đáp trực tiếp + Quà ưu đãi đặc biệt dành riêng người tham dự live" description="Duy Nguyễn điều phối phần thảo luận và công bố quà tặng." gold />
           </div>
           <div className="mt-16 flex justify-center">
             <button
@@ -607,33 +770,62 @@ export default function App() {
       </section>
 
       {/* SECTION 5: SOCIAL PROOF */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-slate-950 to-primary-dark relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent-sky rounded-full blur-3xl" />
-        </div>
+      <section className="py-16 md:py-32 bg-slate-950 relative overflow-hidden">
+        {/* Glow orbs */}
+        <div className="absolute top-0 left-1/3 w-80 h-80 bg-primary/30 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-[#8acdff]/20 rounded-full blur-[80px] pointer-events-none" />
+
         <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {[
-              { value: '1.000+', label: 'Ca SmartVeneer đã thực hiện', icon: '🦷' },
-              { value: '100+', label: 'Phòng khám đang triển khai', icon: '🏥' },
-              { value: '5+ năm', label: 'Nghiên cứu và phát triển', icon: '🔬' },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="relative bg-white/5 border border-white/10 backdrop-blur-sm rounded-3xl p-8 text-center group hover:bg-white/10 transition-all duration-300"
-              >
-                <div className="text-4xl mb-4">{stat.icon}</div>
-                <span className="block text-5xl md:text-6xl font-black mb-3 bg-gradient-to-r from-white via-[#8acdff] to-white bg-clip-text text-transparent">
-                  {stat.value}
-                </span>
-                <span className="text-sm md:text-base font-bold text-white/50 uppercase tracking-widest leading-tight">{stat.label}</span>
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-12 gap-8 lg:gap-16 items-center">
+            {/* Left: heading + stats */}
+            <div className="col-span-12 lg:col-span-6">
+              <h2 className="font-headline text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+                Bảo chứng từ những con số và tổ chức uy tín
+              </h2>
+              <p className="text-slate-300 text-lg leading-relaxed mb-12">
+                Hành trình 5+ năm nghiên cứu được ghi nhận bởi các đơn vị đầu ngành và giới chuyên môn quốc tế.
+              </p>
+              <div className="grid grid-cols-2 gap-6">
+                {[
+                  { value: '1.000+', label: 'Ca lâm sàng' },
+                  { value: '100+', label: 'Phòng khám' },
+                  { value: '06', label: 'Báo chí lớn' },
+                  { value: 'VITA', label: 'Đối tác Đức 100 năm' },
+                ].map((stat, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1, duration: 0.4 }}
+                    className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all duration-300"
+                  >
+                    <span className="block text-4xl md:text-5xl font-black mb-2 bg-gradient-to-r from-white via-[#8acdff] to-white bg-clip-text text-transparent">{stat.value}</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-slate-400">{stat.label}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: testimonial card */}
+            <div className="col-span-12 lg:col-span-6">
+              <div className="relative rounded-[28px] bg-white/5 border border-white/10 backdrop-blur-sm p-8 md:p-10">
+                {/* Quote mark */}
+                <div className="text-6xl font-black leading-none mb-4 bg-gradient-to-r from-primary to-[#8acdff] bg-clip-text text-transparent">"</div>
+                <p className="text-white text-xl md:text-2xl font-semibold leading-relaxed mb-8">
+                  SmartVeneer thay đổi hoàn toàn cách chúng tôi tiếp cận phục hình xâm lấn tối thiểu.
+                </p>
+                <div className="flex items-center gap-4 pt-6 border-t border-white/10">
+                  <img src="/images/speaker-khanh-chi.jpg" alt="Khánh Chi" className="w-12 h-12 rounded-full object-cover flex-shrink-0 ring-2 ring-primary/40" />
+                  <div>
+                    <p className="font-bold text-white">Chị Khánh Chi</p>
+                    <p className="text-slate-400 text-sm">Giám đốc Dentisan Lab</p>
+                  </div>
+                </div>
+                {/* Inner glow */}
+                <div className="absolute inset-0 rounded-[28px] bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -768,6 +960,46 @@ export default function App() {
         </div>
       </section>
 
+      {/* SECTION 9B: SMARTVENEER COMPARISON TABLE */}
+      <section className="py-16 md:py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-10">
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              {['Không tiêm tê', 'Không mài nhiều', 'Không đau', 'Không ê buốt', 'Không viêm lợi, hôi miệng'].map((tag) => (
+                <span key={tag} className="px-4 py-2 rounded-full bg-white border border-slate-200 text-sm font-semibold text-slate-600 shadow-sm">{tag}</span>
+              ))}
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-slate-200 shadow-xl bg-white">
+            <table className="w-full text-left">
+              <thead>
+                <tr>
+                  <th className="p-5 md:p-6 font-bold text-sm uppercase tracking-widest text-white bg-slate-900">Đặc điểm</th>
+                  <th className="p-5 md:p-6 font-bold text-sm uppercase tracking-widest text-white bg-primary">SmartVeneer</th>
+                  <th className="p-5 md:p-6 font-bold text-sm uppercase tracking-widest text-white bg-slate-900">Veneer truyền thống</th>
+                  <th className="p-5 md:p-6 font-bold text-sm uppercase tracking-widest text-white bg-slate-900 hidden md:table-cell">Bọc răng sứ</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {[
+                  { feature: 'Mài răng', sv: 'Tối thiểu (0.1–0.3mm)', veneer: 'Trung bình (0.5–0.8mm)', crown: 'Nhiều (1.5–2.0mm)' },
+                  { feature: 'Cảm giác lâm sàng', sv: 'Không tê, không đau', veneer: 'Cần tê, có thể ê', crown: 'Cần tê, ê buốt nhiều' },
+                  { feature: 'Độ bám dính', sv: 'Vi chốt cơ học độc quyền', veneer: 'Keo dán thông thường', crown: 'Mài + keo dán' },
+                  { feature: 'Bảo hành', sv: 'Đến 20 năm', veneer: '5–10 năm', crown: '10–15 năm' },
+                ].map((row) => (
+                  <tr key={row.feature}>
+                    <td className="p-5 md:p-6 font-bold text-slate-900 bg-slate-50/50 text-sm md:text-base">{row.feature}</td>
+                    <td className="p-5 md:p-6 font-bold text-primary bg-primary/5 text-sm md:text-base">{row.sv}</td>
+                    <td className="p-5 md:p-6 text-slate-500 text-sm md:text-base">{row.veneer}</td>
+                    <td className="p-5 md:p-6 text-slate-500 text-sm md:text-base hidden md:table-cell">{row.crown}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       {/* SECTION 10: EXCLUSIVE GIFT */}
       <section className="py-16 md:py-32 bg-accent-beige relative overflow-hidden">
         <div className="absolute inset-0 opacity-20 mix-blend-overlay">
@@ -789,7 +1021,7 @@ export default function App() {
             </div>
             <h2 className="font-headline text-4xl font-extrabold text-slate-900 mb-6">🎁 Quà ưu đãi đặc biệt dành cho người tham dự</h2>
             <p className="text-slate-800 text-xl font-medium mb-10 max-w-2xl mx-auto leading-relaxed">
-              Ngoài nội dung chuyên môn, người tham gia live sẽ nhận được quà tặng độc quyền từ DETEC — công bố ngay trong buổi tối.
+              Ngoài nội dung chuyên môn, người tham gia live sẽ nhận được quà tặng độc quyền từ DETEC, công bố ngay trong buổi tối.
             </p>
             <div className="bg-slate-900/10 p-6 rounded-2xl mb-10">
               <p className="text-slate-900 font-bold text-lg">
@@ -814,11 +1046,11 @@ export default function App() {
               🎓 Webinar chuyên môn · Miễn phí 100%
             </div>
             <h2 className="font-headline text-5xl font-extrabold text-slate-900 leading-tight mb-6">
-              Giữ chỗ ngay —<br/>
+              Giữ chỗ ngay,<br/>
               <span className="text-primary">trước khi hết slot</span>
             </h2>
             <p className="text-slate-600 text-xl leading-relaxed mb-10">
-              Chỉ 1 buổi tối, bạn sẽ hiểu rõ SmartVeneer từ lâm sàng đến kinh doanh — từ những chuyên gia đang triển khai thực tế.
+              Chỉ 1 buổi tối, bạn sẽ hiểu rõ SmartVeneer từ lâm sàng đến kinh doanh, từ những chuyên gia đang triển khai thực tế.
             </p>
             <div className="space-y-4 mb-10">
               {[
@@ -837,7 +1069,7 @@ export default function App() {
               ].map(stat => (
                 <div key={stat.label} className="text-center">
                   <span className="block text-2xl font-black text-primary">{stat.value}</span>
-                  <span className="text-[10px] uppercase font-bold text-slate-400 mt-1 block">{stat.label}</span>
+                  <span className="text-xs uppercase font-bold text-slate-500 mt-1 block">{stat.label}</span>
                 </div>
               ))}
             </div>
@@ -894,7 +1126,7 @@ export default function App() {
                 >
                   Đăng ký tham gia webinar
                 </button>
-                <p className="text-center text-[10px] text-slate-400 font-medium">
+                <p className="text-center text-sm text-slate-500 font-medium">
                   Thông tin của bạn được bảo mật theo tiêu chuẩn HIPAA & GDPR.
                 </p>
               </form>
