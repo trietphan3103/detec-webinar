@@ -727,7 +727,7 @@ export default function App() {
               quote="Không lý thuyết. Đây là những gì tôi làm thật, sai thật, và rút ra được sau mỗi ca."
             />
             <SpeakerCard
-              name="MC Duy Nguyễn"
+              name="Coach Duy Nguyễn"
               role="Góc nhìn khách hàng"
               description="Không phải chuyên gia kỹ thuật. Là người trực tiếp trải nghiệm SmartVeneer trên chính hàm răng của mình."
               image="/images/speaker-duy-nguyen.jpg"
@@ -750,13 +750,13 @@ export default function App() {
           </div>
           <div className="space-y-4">
             <AgendaItem index={0} time="19:55–20:10" title="Đón tiếp & kết nối" description="Chuẩn bị kỹ thuật và giao lưu đầu giờ." />
-            <AgendaItem index={1} time="20:10–20:15" title="Khai mạc" description="Duy Nguyễn dẫn dắt chương trình." />
+            <AgendaItem index={1} time="20:10–20:15" title="Khai mạc" description="Coach Duy Nguyễn dẫn dắt chương trình." />
             <AgendaItem index={2} time="20:15–20:40" title="Thị trường đang phân hóa: Phòng khám nào hành động trước sẽ dẫn đầu" description="Chuyên gia Vũ Đề chia sẻ tầm nhìn chiến lược." />
             <AgendaItem index={3} time="20:40–21:10" title="SmartVeneer: Từ vật liệu đến lâm sàng" description="Tiến sĩ, Bác sĩ Lê Hưng đi sâu vào chuyên môn." />
             <AgendaItem index={4} time="21:10–21:25" title="Bài toán kinh tế của 1 ca SmartVeneer tại phòng khám" description="Chị Khánh Chi phân tích con số thực tế." highlight />
-            <AgendaItem index={5} time="21:25–21:40" title="Thực chiến từ phòng khám đã triển khai" description="Bác Sĩ Vương Tiến Thịnh chia sẻ kinh nghiệm thực tế." highlight />
-            <AgendaItem index={6} time="21:40–21:45" title="Hệ sinh thái đồng hành DETEC" description="Chuyên Gia Vũ Đề giới thiệu các giải pháp hỗ trợ." />
-            <AgendaItem index={7} time="21:45–22:00" title="Hỏi đáp trực tiếp + Quà ưu đãi đặc biệt dành riêng người tham dự live" description="Duy Nguyễn điều phối phần thảo luận và công bố quà tặng." gold />
+            <AgendaItem index={5} time="21:25–21:40" title="Thực chiến từ phòng khám đã triển khai" description="Bác sĩ Vương Tiến Thịnh chia sẻ kinh nghiệm thực tế." highlight />
+            <AgendaItem index={6} time="21:40–21:45" title="Hệ sinh thái đồng hành DETEC" description="Chuyên gia Vũ Đề giới thiệu các giải pháp hỗ trợ." />
+            <AgendaItem index={7} time="21:45–22:00" title="Hỏi đáp trực tiếp + Quà ưu đãi đặc biệt dành riêng người tham dự live" description="Coach Duy Nguyễn điều phối phần thảo luận và công bố quà tặng." gold />
           </div>
           <div className="mt-16 flex justify-center">
             <button
