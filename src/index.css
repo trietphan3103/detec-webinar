@@ -29,20 +29,8 @@
 
   .hero-image-frame {
     position: relative;
-    border: 12px solid var(--color-primary);
+    border: 6px solid var(--color-primary);
     border-radius: 40px;
-    border-bottom-right-radius: 0;
-  }
-
-  .hero-image-frame::after {
-    content: '';
-    position: absolute;
-    bottom: -12px;
-    right: -12px;
-    width: 80px;
-    height: 80px;
-    background: var(--color-background-dark);
-    border-top-left-radius: 40px;
   }
 
   .curved-mask {
