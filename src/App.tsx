@@ -202,7 +202,7 @@ const Countdown = () => {
 const SpeakerCard = ({ name, role, description, image, quote, imagePosition, objectPositionStyle }: { name: string, role: string, description: string, image: string, quote?: string, imagePosition?: string, objectPositionStyle?: string }) => (
   <motion.div
     whileHover={{ y: -6 }}
-    className="bg-white p-5 sm:p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]"
+    className="bg-white p-5 sm:p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col w-full"
   >
     <div className="aspect-square rounded-xl overflow-hidden mb-6 shrink-0">
       <img src={image} alt={name} className={`w-full h-full object-cover ${imagePosition || 'object-top'}`} style={objectPositionStyle ? { objectPosition: objectPositionStyle } : undefined} referrerPolicy="no-referrer" />
@@ -449,7 +449,7 @@ const VideoGallery = () => {
   const allRefs = useRef<(HTMLVideoElement | null)[]>([]);
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {['https://pub-8f89a714743846798b60962aa11734dd.r2.dev/video1.mp4', 'https://pub-8f89a714743846798b60962aa11734dd.r2.dev/video2.mp4', 'https://pub-8f89a714743846798b60962aa11734dd.r2.dev/video3.mp4'].map((src, i) => (
+      {['https://pub-8f89a714743846798b60962aa11734dd.r2.dev/video2.mp4', 'https://pub-8f89a714743846798b60962aa11734dd.r2.dev/video3.mp4', 'https://pub-8f89a714743846798b60962aa11734dd.r2.dev/video1.mp4'].map((src, i) => (
         <VideoPlayer key={src} src={src} allRefs={allRefs} index={i} />
       ))}
     </div>
@@ -478,6 +478,108 @@ const PortraitVideoGallery = () => {
 
 // --- Main App ---
 
+declare global { interface Window { fbq?: (...args: unknown[]) => void } }
+
+const ZALO_URL = import.meta.env.VITE_ZALO_URL || '#';
+
+const SuccessPopup = () => {
+  const [countdown, setCountdown] = useState(5);
+  const [clicked, setClicked] = useState(false);
+
+  useEffect(() => {
+    if (clicked) return;
+    if (countdown === 0) {
+      window.location.href = ZALO_URL;
+      return;
+    }
+    const t = setTimeout(() => setCountdown(c => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [countdown, clicked]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+    >
+      <motion.div
+        initial={{ scale: 0.85, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.85, opacity: 0, y: 20 }}
+        transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+        className="bg-white rounded-3xl p-8 md:p-12 max-w-md w-full text-center shadow-2xl"
+      >
+        <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle className="w-10 h-10 text-green-500" />
+        </div>
+        <h2 className="text-2xl font-bold text-slate-900 mb-3">Đăng ký thành công!</h2>
+        <p className="text-slate-500 mb-8 leading-relaxed">
+          Bạn đã đăng ký tham gia <strong>THE PIONEER 02</strong>.<br />
+          Tham gia nhóm Zalo để nhận tài liệu và cập nhật mới nhất.
+        </p>
+        <a
+          href={ZALO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setClicked(true)}
+          className="flex items-center justify-center gap-2 w-full bg-[#0068FF] hover:bg-[#0055CC] active:scale-95 text-white font-bold py-4 rounded-full text-base transition-all shadow-lg shadow-blue-200 mb-5"
+        >
+          <span>Tham gia nhóm Zalo nhận tài liệu</span>
+          <ChevronRight className="w-4 h-4" />
+        </a>
+        {!clicked ? (
+          <>
+            <p className="text-slate-400 text-sm">
+              Tự động chuyển hướng sau{' '}
+              <span className="font-bold text-primary tabular-nums">{countdown}s</span>
+            </p>
+            <div className="mt-3 h-1 bg-slate-100 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-primary rounded-full"
+                initial={{ width: '100%' }}
+                animate={{ width: '0%' }}
+                transition={{ duration: 5, ease: 'linear' }}
+              />
+            </div>
+          </>
+        ) : (
+          <p className="text-slate-400 text-sm">Hẹn gặp bạn trong nhóm Zalo! 👋</p>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+};
+
+type FieldErrors = Partial<Record<'name' | 'phone' | 'email' | 'clinic' | 'location', string>>;
+
+const validateForm = (data: { name: string; phone: string; email: string; clinic: string; location: string }): FieldErrors => {
+  const errors: FieldErrors = {};
+  if (!data.name.trim())
+    errors.name = 'Vui lòng điền họ và tên';
+  if (!/^(0|\+84)[0-9]{8,9}$/.test(data.phone.replace(/\s/g, '')))
+    errors.phone = 'Số điện thoại chưa hợp lệ';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
+    errors.email = 'Email chưa đúng định dạng';
+  if (!data.clinic.trim())
+    errors.clinic = 'Vui lòng điền tên phòng khám';
+  if (!data.location.trim())
+    errors.location = 'Vui lòng điền tỉnh / thành phố';
+  return errors;
+};
+
+const FieldTooltip = ({ message }: { message: string }) => (
+  <motion.p
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.15 }}
+    className="text-[11px] text-red-500 text-right mt-1 pr-3"
+  >
+    .{message}
+  </motion.p>
+);
+
 export default function App() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [formData, setFormData] = useState({
@@ -487,15 +589,89 @@ export default function App() {
     clinic: '',
     location: ''
   });
+  const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [submitError, setSubmitError] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // --- Scroll depth tracking ---
+  useEffect(() => {
+    const milestones = [25, 50, 75, 90];
+    const fired = new Set<number>();
+    const onScroll = () => {
+      const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      milestones.forEach(m => {
+        if (!fired.has(m) && scrolled >= m) {
+          fired.add(m);
+          window.fbq?.('trackCustom', `ViewContentScroll${m}`);
+        }
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // --- Time on site tracking ---
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => window.fbq?.('trackCustom', 'TimeOnSite30s'), 30_000),
+      setTimeout(() => window.fbq?.('trackCustom', 'TimeOnSite60s'), 60_000),
+      setTimeout(() => window.fbq?.('trackCustom', 'TimeOnSite120s'), 120_000),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  const clearFieldError = (field: keyof FieldErrors) => {
+    if (fieldErrors[field]) setFieldErrors(prev => { const n = {...prev}; delete n[field]; return n; });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Cảm ơn bạn đã đăng ký! Chúng tôi sẽ liên hệ sớm.');
+    const errors = validateForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+    setFormStatus('loading');
+    setFieldErrors({});
+    setSubmitError('');
+
+    const eventId = `lead-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const getCookie = (name: string) => document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`))?.[1] ?? '';
+
+    try {
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          phone: formData.phone.trim(),
+          email: formData.email.trim(),
+          clinic_name: formData.clinic.trim(),
+          city: formData.location.trim(),
+          eventId,
+          fbc: getCookie('_fbc'),
+          fbp: getCookie('_fbp'),
+          userAgent: navigator.userAgent,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.message || 'Lỗi hệ thống');
+      }
+      // Browser-side pixel event — dedup với server event qua eventId
+      window.fbq?.('trackCustom', 'FormSubmit', {}, { eventID: eventId });
+      setFormStatus('success');
+      setShowSuccess(true);
+    } catch (err: unknown) {
+      setFormStatus('error');
+      setSubmitError(err instanceof Error ? err.message : 'Có lỗi xảy ra, vui lòng thử lại.');
+    }
   };
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
+      <AnimatePresence>{showSuccess && <SuccessPopup />}</AnimatePresence>
       <Navbar />
 
       {/* SECTION 1: HERO */}
@@ -882,9 +1058,9 @@ export default function App() {
       <section className="py-10 md:py-20 bg-white" id="speakers">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mb-8 md:mb-16 text-center">
-            5 chuyên gia sẽ đồng hành cùng bạn tối 03/04
+            4 chuyên gia sẽ đồng hành cùng bạn tối 03/04
           </h2>
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <SpeakerCard
               name="Chuyên gia Công nghệ và Kỹ thuật phòng Lab Vũ Đề"
               role="Người tiên phong công nghệ SmartVeneer"
@@ -914,13 +1090,6 @@ export default function App() {
               image="/images/speaker-vuong-tin-thinh.jpg"
               quote="Không lý thuyết. Đây là những gì tôi làm thật, sai thật, và rút ra được sau mỗi ca."
             />
-            <SpeakerCard
-              name="Coach Duy Nguyễn"
-              role="Góc nhìn khách hàng"
-              description="Không phải chuyên gia kỹ thuật. Là người trực tiếp trải nghiệm SmartVeneer trên chính hàm răng của mình."
-              image="/images/speaker-duy-nguyen.jpg"
-              quote="Anh đặt câu hỏi từ góc độ bệnh nhân: những gì khách hàng của bạn đang thực sự muốn biết."
-            />
           </div>
         </div>
       </section>
@@ -938,13 +1107,13 @@ export default function App() {
           </div>
           <div className="space-y-4">
             <AgendaItem index={0} time="19:55–20:10" title="Đón tiếp & kết nối" description="Chuẩn bị kỹ thuật và giao lưu đầu giờ." />
-            <AgendaItem index={1} time="20:10–20:15" title="Khai mạc" description="Coach Duy Nguyễn dẫn dắt chương trình." />
+            <AgendaItem index={1} time="20:10–20:15" title="Khai mạc" description="Host chương trình dẫn dắt." />
             <AgendaItem index={2} time="20:15–20:40" title="Thị trường đang phân hóa: Phòng khám nào hành động trước sẽ dẫn đầu" description="Chuyên gia Vũ Đề chia sẻ tầm nhìn chiến lược." />
             <AgendaItem index={3} time="20:40–21:10" title="SmartVeneer: Từ vật liệu đến lâm sàng" description="Thầy thuốc nhân dân, Tiến sĩ, Bác sĩ Lê Hưng đi sâu vào chuyên môn." />
             <AgendaItem index={4} time="21:10–21:25" title="Bài toán kinh tế của 1 ca SmartVeneer tại phòng khám" description="Bà Trần Khánh Chi phân tích con số thực tế." highlight />
             <AgendaItem index={5} time="21:25–21:40" title="Thực chiến từ phòng khám đã triển khai" description="Bác sĩ Vương Tiến Thịnh chia sẻ kinh nghiệm thực tế." highlight />
             <AgendaItem index={6} time="21:40–21:45" title="Hệ sinh thái đồng hành DETEC" description="Chuyên gia Vũ Đề giới thiệu các giải pháp hỗ trợ." />
-            <AgendaItem index={7} time="21:45–22:00" title="Hỏi đáp trực tiếp + Quà ưu đãi đặc biệt dành riêng người tham dự live" description="Coach Duy Nguyễn điều phối phần thảo luận và công bố quà tặng." gold />
+            <AgendaItem index={7} time="21:45–22:00" title="Hỏi đáp trực tiếp + Quà ưu đãi đặc biệt dành riêng người tham dự live" description="Host chương trình điều phối phần thảo luận và công bố quà tặng." gold />
           </div>
           <div className="mt-16 flex justify-center">
             <button
@@ -1265,54 +1434,81 @@ export default function App() {
           <div className="col-span-12 lg:col-span-6">
             <div className="bg-white p-5 sm:p-8 md:p-12 rounded-[24px] md:rounded-[40px] shadow-2xl shadow-primary/10 border border-slate-100">
               <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-5 md:mb-8">Đăng ký tham gia webinar</h3>
-              <form className="space-y-3 md:space-y-5" onSubmit={handleSubmit}>
+              <form className="space-y-3 md:space-y-5" onSubmit={handleSubmit} noValidate>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <input 
-                    className="w-full bg-slate-50 border border-slate-100 rounded-full px-4 py-3 text-sm md:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
-                    placeholder="Họ và tên *" 
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={e => setFormData({...formData, name: e.target.value})}
-                  />
-                  <input 
-                    className="w-full bg-slate-50 border border-slate-100 rounded-full px-4 py-3 text-sm md:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
-                    placeholder="Số điện thoại *" 
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={e => setFormData({...formData, phone: e.target.value})}
-                  />
+                  <div>
+                    <input
+                      className={`w-full bg-slate-50 border rounded-full px-4 py-3 text-sm md:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all ${fieldErrors.name ? 'border-red-300 bg-red-50/30' : 'border-slate-100'}`}
+                      placeholder="Họ và tên *"
+                      type="text"
+                      value={formData.name}
+                      onChange={e => { setFormData({...formData, name: e.target.value}); clearFieldError('name'); }}
+                    />
+                    <AnimatePresence>{fieldErrors.name && <FieldTooltip message={fieldErrors.name} />}</AnimatePresence>
+                  </div>
+                  <div>
+                    <input
+                      className={`w-full bg-slate-50 border rounded-full px-4 py-3 text-sm md:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all ${fieldErrors.phone ? 'border-red-300 bg-red-50/30' : 'border-slate-100'}`}
+                      placeholder="Số điện thoại *"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={e => { setFormData({...formData, phone: e.target.value}); clearFieldError('phone'); }}
+                    />
+                    <AnimatePresence>{fieldErrors.phone && <FieldTooltip message={fieldErrors.phone} />}</AnimatePresence>
+                  </div>
                 </div>
-                <input
-                  className="w-full bg-slate-50 border border-slate-100 rounded-full px-4 py-3 text-sm md:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                  placeholder="Email *"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={e => setFormData({...formData, email: e.target.value})}
-                />
-                <input
-                  className="w-full bg-slate-50 border border-slate-100 rounded-full px-4 py-3 text-sm md:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                  placeholder="Tên phòng khám / cơ sở *"
-                  type="text"
-                  required
-                  value={formData.clinic}
-                  onChange={e => setFormData({...formData, clinic: e.target.value})}
-                />
-                <input 
-                  className="w-full bg-slate-50 border border-slate-100 rounded-full px-4 py-3 text-sm md:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
-                  placeholder="Tỉnh / Thành phố *" 
-                  type="text"
-                  required
-                  value={formData.location}
-                  onChange={e => setFormData({...formData, location: e.target.value})}
-                />
-                <button 
-                  className="w-full bg-primary hover:bg-primary-light text-white font-bold py-3 md:py-4 rounded-full text-sm md:text-base transition-all shadow-lg shadow-primary/20 mt-2 active:scale-95" 
+                <div>
+                  <input
+                    className={`w-full bg-slate-50 border rounded-full px-4 py-3 text-sm md:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all ${fieldErrors.email ? 'border-red-300 bg-red-50/30' : 'border-slate-100'}`}
+                    placeholder="Email *"
+                    type="email"
+                    value={formData.email}
+                    onChange={e => { setFormData({...formData, email: e.target.value}); clearFieldError('email'); }}
+                  />
+                  <AnimatePresence>{fieldErrors.email && <FieldTooltip message={fieldErrors.email} />}</AnimatePresence>
+                </div>
+                <div>
+                  <input
+                    className={`w-full bg-slate-50 border rounded-full px-4 py-3 text-sm md:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all ${fieldErrors.clinic ? 'border-red-300 bg-red-50/30' : 'border-slate-100'}`}
+                    placeholder="Tên phòng khám / cơ sở *"
+                    type="text"
+                    value={formData.clinic}
+                    onChange={e => { setFormData({...formData, clinic: e.target.value}); clearFieldError('clinic'); }}
+                  />
+                  <AnimatePresence>{fieldErrors.clinic && <FieldTooltip message={fieldErrors.clinic} />}</AnimatePresence>
+                </div>
+                <div>
+                  <input
+                    className={`w-full bg-slate-50 border rounded-full px-4 py-3 text-sm md:text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all ${fieldErrors.location ? 'border-red-300 bg-red-50/30' : 'border-slate-100'}`}
+                    placeholder="Tỉnh / Thành phố *"
+                    type="text"
+                    value={formData.location}
+                    onChange={e => { setFormData({...formData, location: e.target.value}); clearFieldError('location'); }}
+                  />
+                  <AnimatePresence>{fieldErrors.location && <FieldTooltip message={fieldErrors.location} />}</AnimatePresence>
+                </div>
+                {submitError && (
+                  <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 text-sm rounded-2xl px-4 py-3">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{submitError}</span>
+                  </div>
+                )}
+                <button
+                  className="w-full bg-primary hover:bg-primary-light text-white font-bold py-3 md:py-4 rounded-full text-sm md:text-base transition-all shadow-lg shadow-primary/20 mt-2 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   type="submit"
+                  disabled={formStatus === 'loading'}
                 >
-                  Đăng ký tham gia webinar
+                  {formStatus === 'loading' ? (
+                    <>
+                      <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                      </svg>
+                      Đang xử lý...
+                    </>
+                  ) : (
+                    'Đăng ký tham gia webinar'
+                  )}
                 </button>
                 <p className="text-center text-sm text-slate-500 font-medium">
                   Thông tin của bạn được bảo mật theo tiêu chuẩn HIPAA & GDPR.
