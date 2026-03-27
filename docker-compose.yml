@@ -1,0 +1,9 @@
+services:
+  detec-webinar:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: detec-webinar
+    ports:
+      - "3000:80"
+    restart: unless-stopped
