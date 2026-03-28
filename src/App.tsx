@@ -1685,7 +1685,7 @@ export default function App() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <SpeakerCard
-              name="Chuyên gia Công nghệ và Kỹ thuật phòng Lab Vũ Đề"
+              name="Nhà sáng lập Hệ sinh thái DETEC Vũ Đề"
               role="Người tiên phong công nghệ SmartVeneer"
               description=""
               image="/images/speaker-vu-de.jpg"
