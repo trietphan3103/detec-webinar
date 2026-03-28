@@ -1855,7 +1855,7 @@ export default function App() {
       </section>
 
       {/* SECTION: DETEC ECOSYSTEM */}
-      <section className="py-16 md:py-24 bg-slate-950 overflow-hidden relative">
+      <section className="py-16 md:py-24 bg-slate-950 overflow-hidden relative" id="ecosystem">
         <div className="absolute top-0 right-0 w-[500px] h-[400px] bg-primary/8 blur-[140px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
 
@@ -1976,7 +1976,7 @@ export default function App() {
       </section>
 
       {/* SECTION 10: EXCLUSIVE GIFT */}
-      <section className="py-10 md:py-20 bg-accent-beige relative overflow-hidden" id="ecosystem">
+      <section className="py-10 md:py-20 bg-accent-beige relative overflow-hidden">
         <div className="absolute inset-0 opacity-20 mix-blend-overlay">
           <img 
             alt="Pattern" 
