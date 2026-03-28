@@ -1686,7 +1686,7 @@ export default function App() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <SpeakerCard
               name="Nhà sáng lập Hệ sinh thái DETEC Vũ Đề"
-              role="Người tiên phong công nghệ SmartVeneer"
+              role="Chủ tịch Hội đồng quản trị DETEC Group · Nhà sáng chế công nghệ SmartVeneer · Chuyên gia Công nghệ & Kỹ thuật Lab"
               description=""
               image="/images/speaker-vu-de.jpg"
               quote="Sáng chế kỹ thuật vi chốt cơ học, làm rỗ bề mặt vật liệu Zirconia ứng dụng sản xuất miếng dán SmartVeneer, chưa có đơn vị nào triển khai tại Việt Nam."
