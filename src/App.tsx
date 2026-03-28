@@ -1921,7 +1921,7 @@ export default function App() {
                     <path d="M7 10l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 ),
-                title: 'Sản phẩm đã được xử lý theo công nghệ SmartVeneer, giao tận nơi',
+                title: 'Cung cấp sản phẩm đã xử lý theo công nghệ SmartVeneer',
                 sub: 'Bác sĩ tập trung điều trị, không lo vật liệu',
                 accent: 'blue',
               },
