@@ -1253,6 +1253,53 @@ export default function App() {
         </div>
       </section>
 
+      {/* SECTION 5: SMARTVENEER LÀ GÌ? */}
+      <section className="py-10 md:py-20 bg-gradient-to-br from-slate-950 via-primary-dark to-primary overflow-hidden" id="technology">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-12 gap-y-8 md:gap-x-8 lg:gap-x-16 items-center">
+            <div className="col-span-12 lg:col-span-6">
+              <div className="inline-flex items-center gap-2 bg-white/10 text-white/80 text-xs font-bold px-4 py-2 rounded-full mb-6 border border-white/20 backdrop-blur-sm">
+                ✦ Công nghệ độc quyền
+              </div>
+              <h2 className="font-headline text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight mb-6 bg-gradient-to-r from-white via-[#8acdff] to-white bg-clip-text text-transparent">
+                SMARTVENEER<br/>LÀ GÌ?
+              </h2>
+              <p className="text-white/70 text-sm md:text-base leading-relaxed mb-6 md:mb-10">
+                Công nghệ dán răng bảo tồn, khôi phục hình thể, màu sắc và chức năng của hàm răng. <span className="text-white font-semibold">Bảo tồn tối đa răng thật.</span>
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { icon: '🎨', label: 'Cản màu xuất sắc' },
+                  { icon: '💎', label: 'Bền chắc dài lâu' },
+                  { icon: '🛡️', label: 'An toàn vượt trội' },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex flex-col gap-1 items-center text-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-2 py-3">
+                    <span className="text-xl">{item.icon}</span>
+                    <p className="text-white font-bold text-xs sm:text-sm">{item.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="col-span-12 lg:col-span-6">
+              <div className="relative">
+                <div className="absolute -inset-4 bg-gradient-to-tr from-primary/40 to-[#8acdff]/20 rounded-[50px] blur-2xl" />
+                <div className="relative p-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-[40px] overflow-hidden shadow-2xl">
+                  <img
+                    alt="SmartVeneer smile result"
+                    className="w-full h-[440px] object-cover rounded-[32px]"
+                    src="/images/smartveneer-smile.jpg"
+                  />
+                  <div className="absolute bottom-6 left-6 right-6 bg-black/40 backdrop-blur-md rounded-2xl px-5 py-3 border border-white/10">
+                    <p className="text-white font-bold text-sm">Kết quả thực tế · SmartVeneer by DETEC</p>
+                    <p className="text-white/60 text-xs mt-0.5">Can thiệp tối thiểu · Hiệu quả tối đa</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* SECTION 9B: ZIRCONIA SEM PROOF */}
       <section className="py-16 md:py-24 bg-white overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
@@ -1831,7 +1878,7 @@ export default function App() {
             <h2 className="font-headline text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight max-w-3xl mb-3">
               Giải pháp đồng hành toàn diện từ DETEC
             </h2>
-            <p className="text-slate-300 text-base md:text-lg max-w-2xl italic">
+            <p className="text-slate-300 text-base md:text-lg italic">
               "Bạn không chỉ có công nghệ, mà có cả hệ sinh thái giúp bạn triển khai thành công"
             </p>
           </motion.div>
