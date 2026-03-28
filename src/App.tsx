@@ -1260,7 +1260,7 @@ export default function App() {
               </div>
               <button
                 className="bg-primary hover:bg-primary-light text-white px-8 py-3 md:py-4 rounded-full font-bold text-sm md:text-base transition-all shadow-lg shadow-primary/20 active:scale-95"
-                onClick={() => document.getElementById('technology')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => document.getElementById('registration')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Tìm hiểu công nghệ SmartVeneer →
               </button>
