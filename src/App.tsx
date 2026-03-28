@@ -206,7 +206,7 @@ const Countdown = () => {
   );
 };
 
-const SpeakerCard = ({ name, role, description, image, quote, imagePosition, objectPositionStyle }: { name: string, role: string, description: string, image: string, quote?: string, imagePosition?: string, objectPositionStyle?: string }) => (
+const SpeakerCard = ({ name, role, badge, description, image, quote, imagePosition, objectPositionStyle }: { name: string, role: string, badge?: string, description: string, image: string, quote?: string, imagePosition?: string, objectPositionStyle?: string }) => (
   <motion.div
     whileHover={{ y: -6 }}
     className="bg-white p-5 sm:p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col w-full"
@@ -215,7 +215,8 @@ const SpeakerCard = ({ name, role, description, image, quote, imagePosition, obj
       <img src={image} alt={name} className={`w-full h-full object-cover ${imagePosition || 'object-top'}`} style={objectPositionStyle ? { objectPosition: objectPositionStyle } : undefined} referrerPolicy="no-referrer" />
     </div>
     <h3 className="text-xl font-bold text-slate-900 mb-1">{name}</h3>
-    <p className="text-sm text-primary font-semibold mb-4">{role}</p>
+    <p className="text-sm text-primary font-semibold mb-2">{role}</p>
+    {badge && <span className="inline-block self-start bg-primary/10 text-primary text-xs font-semibold px-2.5 py-1 rounded-full mb-3">{badge}</span>}
     <p className="text-slate-500 text-sm leading-relaxed mb-4 flex-grow">{description}</p>
     {quote && (
       <blockquote className="border-l-2 border-primary/40 pl-4 mt-auto">
@@ -1693,7 +1694,8 @@ export default function App() {
             <SpeakerCard
               name="Thầy thuốc nhân dân, Tiến sĩ, Bác sĩ Lê Hưng"
               role="Chuyên gia Cao cấp Phục hình Răng bảo tồn"
-              description="Nhà phát triển công nghệ SmartVeneer · Chủ tịch Hội đồng chuyên môn DETEC · Giám đốc chuyên môn Nha khoa Dr. Lê Hưng & Cộng sự · Nguyên Giám đốc Bệnh viện Đa khoa Đống Đa"
+              badge="Nhà phát triển công nghệ SmartVeneer"
+              description="Chủ tịch Hội đồng chuyên môn DETEC · Giám đốc chuyên môn Nha khoa Dr. Lê Hưng & Cộng sự · Nguyên Giám đốc Bệnh viện Đa khoa Đống Đa"
               image="/images/speaker-le-hung.jpg"
               quote="Đóng góp chuyên môn, nghiên cứu phát triển công nghệ dán răng bảo tồn SmartVeneer và là một trong những bác sĩ đầu tiên đã trải nghiệm SmartVeneer trên chính hàm răng của mình."
               objectPositionStyle="35% 15%"
