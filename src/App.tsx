@@ -1226,7 +1226,7 @@ export default function App() {
                   <img src="/images/speaker-vu-de.jpg" alt="Chuyên gia Vũ Đề" className="w-full object-cover object-top" style={{ maxHeight: 480 }} />
                 </div>
                 <div className="mt-5 bg-white rounded-2xl border border-slate-200 px-5 py-4 shadow-sm">
-                  <p className="font-black text-slate-900 text-base mb-2">Nhà sáng lập Hệ sinh thái DETEC</p>
+                  <p className="font-black text-slate-900 text-base mb-2">Nhà sáng lập Hệ sinh thái DETEC Vũ Đề</p>
                   <div className="space-y-1.5 mb-3">
                     <p className="text-slate-700 text-sm flex items-start gap-2"><span className="text-emerald-500 mt-0.5">✓</span>Chủ tịch Hội đồng quản trị DETEC Group</p>
                     <p className="text-slate-700 text-sm flex items-start gap-2"><span className="text-emerald-500 mt-0.5">✓</span>Nhà sáng chế công nghệ SmartVeneer</p>
