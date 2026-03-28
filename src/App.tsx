@@ -966,9 +966,9 @@ export default function App() {
               <p className="text-xs font-black tracking-widest text-white uppercase mb-7 bg-primary/20 border border-primary/30 rounded-lg px-3 py-1.5 inline-block">Tỷ lệ bệnh răng miệng</p>
               <div className="space-y-6">
                 {[
-                  { label: 'Nhóm 40–60 tuổi có vấn đề về răng miệng', pct: 85 },
-                  { label: 'Đã từng làm sứ hoặc giải pháp nha khoa khác', pct: 50 },
-                  { label: 'Cần sửa chữa hoặc thay thế giải pháp cũ', pct: 30 },
+                  { label: 'Nhóm 40–49 tuổi bị mất răng (mất ít nhất 1 răng)', pct: 91 },
+                  { label: 'Người trên 45 tuổi có sâu răng', pct: 90 },
+                  { label: 'Người lớn mắc bệnh nha chu / viêm lợi', pct: 80 },
                 ].map((row) => (
                   <div key={row.label}>
                     <div className="flex justify-between items-baseline mb-2.5">
@@ -987,7 +987,7 @@ export default function App() {
                   </div>
                 ))}
               </div>
-              <p className="text-slate-400 text-xs mt-7 bg-white/5 border border-white/10 rounded-lg px-3 py-2 inline-block">Nguồn: Phân tích thị trường nha khoa Việt Nam, DETEC Research</p>
+              <p className="text-slate-400 text-xs mt-7 bg-white/5 border border-white/10 rounded-lg px-3 py-2 inline-block">Nguồn: BMC Oral Health (2010), National Oral Health Survey VN, WHO Country Profile VN 2022</p>
             </motion.div>
 
             {/* Right: so sánh giá */}
