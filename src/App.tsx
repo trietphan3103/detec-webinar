@@ -1737,7 +1737,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 md:px-8">
           <div className="text-center mb-10 md:mb-20">
             <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 bg-gradient-to-r from-white via-[#eaca8b] to-white bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(234,202,139,0.5)]">
-              Lộ trình 2 tiếng, không có phần nào thừa
+              Lộ trình 2 tiếng thay đổi tư duy và tương lai phát triển của phòng khám
             </h2>
             <p className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-sm text-white/80 text-base font-medium px-5 py-2.5 rounded-full mt-2">
               📧 Zoom link gửi qua email trước 18:00 ngày 10/04
