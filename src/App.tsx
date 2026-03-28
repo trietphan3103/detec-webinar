@@ -1719,7 +1719,6 @@ export default function App() {
               role="Giám đốc vận hành nha khoa Dentisan"
               description="Người trực tiếp vận hành mô hình SmartVeneer thực chiến tại phòng khám."
               image="/images/speaker-khanh-chi.jpg"
-              quote="10 ca/tháng — 780 triệu lợi nhuận thuần. Số liệu thật, từ phòng khám đang chạy."
             />
             <SpeakerCard
               name="Bác sĩ Vương Tiến Thịnh"
