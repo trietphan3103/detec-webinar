@@ -1717,16 +1717,16 @@ export default function App() {
             <SpeakerCard
               name="Bà Trần Khánh Chi"
               role="Giám đốc vận hành nha khoa Dentisan"
-              description="Người trực tiếp vận hành mô hình SmartVeneer thực chiến tại phòng khám."
+              description="Người trực tiếp đưa SmartVeneer vào vận hành tại phòng khám — không phải thí điểm, đang chạy thật và có số liệu."
               image="/images/speaker-khanh-chi.jpg"
-              quote="Số liệu thật, từ phòng khám đang chạy."
+              quote="Tôi không nói lý thuyết. Tôi nói đúng con số từ phòng khám đang chạy của mình."
             />
             <SpeakerCard
               name="Bác sĩ Vương Tiến Thịnh"
               role="Bác sĩ thực chiến lâm sàng"
-              description="Bác sĩ đang triển khai SmartVeneer tại phòng khám. Chia sẻ từ ca đầu tiên đến quy trình chuẩn hóa."
+              description="Đang triển khai SmartVeneer tại phòng khám. Chia sẻ đúng những gì xảy ra thực tế — từ ca đầu tiên, những chỗ vấp, đến khi quy trình bắt đầu ổn định."
               image="/images/speaker-vuong-tin-thinh.jpg"
-              quote="Không lý thuyết. Đây là những gì tôi làm thật, sai thật, và rút ra được sau mỗi ca."
+              quote="Chỉ qua thực hành mới hiểu được. Tôi kể lại đúng như nó diễn ra — kể cả phần sai."
             />
           </div>
         </div>
