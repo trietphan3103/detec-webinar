@@ -1909,7 +1909,7 @@ export default function App() {
                     <path d="M10 2a8 8 0 100 16A8 8 0 0010 2z" stroke="currentColor" strokeWidth="1.8"/>
                   </svg>
                 ),
-                title: 'Được hướng dẫn kỹ thuật bài bản qua video và case lâm sàng thực tế',
+                title: 'Được hướng dẫn kỹ thuật online/offline và qua các case lâm sàng thực tế',
                 sub: 'Không phải tự thử sai',
                 accent: 'blue',
               },
