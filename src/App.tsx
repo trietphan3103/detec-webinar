@@ -226,11 +226,11 @@ const SpeakerCard = ({ name, role, description, image, quote, imagePosition, obj
 );
 
 const caseImages = [
-  { src: '/images/case-qa-01.png', label: 'Kết quả thực tế ca 1' },
-  { src: '/images/case-qa-02.png', label: 'Kết quả thực tế ca 2' },
-  { src: '/images/case-qa-03.png', label: 'Kết quả thực tế ca 3' },
-  { src: '/images/case-artboard-1.png', label: 'Kết quả thực tế ca 4' },
-  { src: '/images/case-artboard-2.png', label: 'Kết quả thực tế ca 5' },
+  { src: '/images/case-qa-01.jpg', label: 'Kết quả thực tế ca 1' },
+  { src: '/images/case-qa-02.jpg', label: 'Kết quả thực tế ca 2' },
+  { src: '/images/case-qa-03.jpg', label: 'Kết quả thực tế ca 3' },
+  { src: '/images/case-artboard-1.jpg', label: 'Kết quả thực tế ca 4' },
+  { src: '/images/case-artboard-2.jpg', label: 'Kết quả thực tế ca 5' },
   { src: '/images/case-artboard-new.png', label: 'Kết quả thực tế ca 6' },
 ];
 
@@ -773,7 +773,7 @@ export default function App() {
               <img
                 alt="Tư vấn điều trị"
                 className="w-full h-full object-cover"
-                src="/images/dental-consultation.png"
+                src="/images/dental-consultation.jpg"
               />
             </div>
           </motion.div>
