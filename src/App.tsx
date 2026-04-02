@@ -225,7 +225,7 @@ const SpeakerCard = ({ name, role, roleBullets, description, image, quote, image
       <p className="text-sm text-primary font-semibold mb-2">{role}</p>
     )}
     {Array.isArray(description) ? (
-      <ul className="text-slate-500 text-sm mb-4 flex-grow space-y-0.5">
+      <ul className="text-primary text-sm font-semibold mb-4 flex-grow space-y-0.5">
         {(description as string[]).map((item, i) => (
           <li key={i} className="flex items-start gap-1.5"><span className="mt-1 shrink-0">•</span><span>{item}</span></li>
         ))}
@@ -275,7 +275,7 @@ const AgendaItem = ({ time, title, description, highlight, gold, index }: { time
     whileInView={{ opacity: 1, x: 0 }}
     viewport={{ once: true }}
     transition={{ duration: 0.4, delay: index * 0.08 }}
-    className={`relative flex flex-col md:flex-row md:items-center gap-6 p-6 rounded-2xl transition-all duration-300 cursor-default overflow-hidden ${
+    className={`relative flex flex-col md:flex-row md:items-center gap-2 md:gap-6 p-4 md:p-6 rounded-xl md:rounded-2xl transition-all duration-300 cursor-default overflow-hidden ${
       gold
         ? 'border border-[#eaca8b]/60 shadow-lg shadow-[#eaca8b]/10'
         : highlight
@@ -759,41 +759,39 @@ export default function App() {
               Đăng ký tham gia miễn phí <ArrowRight className="w-5 h-5" />
             </a>
 
-            <p className="text-slate-400 text-sm md:text-base">
-              Dành cho: Bác sĩ RHM · Chủ phòng khám · Người muốn nâng cấp phục hình thẩm mỹ
-            </p>
           </motion.div>
 
-          {/* RIGHT COLUMN — Speakers + QR */}
+          {/* RIGHT COLUMN — Speakers (desktop only) + QR (always) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="col-span-12 lg:col-span-5"
           >
-            <p className="text-sm font-black tracking-[0.2em] text-slate-300 uppercase mb-5 text-center lg:text-right">Chuyên gia đồng hành</p>
-
-            {/* 2x2 speaker grid */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              {[
-                { name: 'Chuyên gia\nVũ Đề', role: 'Nhà sáng lập DETEC', image: '/images/speaker-vu-de-thumb.jpg', color: 'border-primary' },
-                { name: 'TTND.TS.BS\nLê Hưng', role: 'Nhà phát triển SmartVeneer', image: '/images/speaker-le-hung-thumb.jpg', color: 'border-accent-beige' },
-                { name: 'Bà Trần\nKhánh Chi', role: 'GĐ Vận hành Dentisan', image: '/images/speaker-khanh-chi-thumb.jpg', color: 'border-emerald-400' },
-                { name: 'BS. Vương\nTiến Thịnh', role: 'Bác sĩ thực chiến', image: '/images/speaker-vuong-tin-thinh-thumb.jpg', color: 'border-accent-sky' },
-              ].map((speaker) => (
-                <div key={speaker.name} className="flex flex-col items-center text-center gap-2.5 glass-card rounded-2xl px-3 py-5">
-                  <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-[3px] ${speaker.color} shadow-lg`}>
-                    <img src={speaker.image} alt={speaker.name} className="w-full h-full object-cover object-top" referrerPolicy="no-referrer" loading="eager" decoding="sync" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+            {/* 2x2 speaker grid — desktop only */}
+            <div className="hidden lg:block">
+              <p className="text-sm font-black tracking-[0.2em] text-slate-300 uppercase mb-5 text-center lg:text-right">Chuyên gia đồng hành</p>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                {[
+                  { name: 'Chuyên gia\nVũ Đề', role: 'Nhà sáng chế SmartVeneer', image: '/images/speaker-vu-de-thumb.jpg', color: 'border-primary' },
+                  { name: 'TTND.TS.BS\nLê Hưng', role: 'Nhà phát triển SmartVeneer', image: '/images/speaker-le-hung-thumb.jpg', color: 'border-accent-beige' },
+                  { name: 'Bà Trần\nKhánh Chi', role: 'Giám đốc Vận hành Dentisan', image: '/images/speaker-khanh-chi-thumb.jpg', color: 'border-emerald-400' },
+                  { name: 'BS. Vương\nTiến Thịnh', role: 'Bác sĩ thực hành lâm sàng tại Nha khoa Dentisan', image: '/images/speaker-vuong-tin-thinh-thumb.jpg', color: 'border-accent-sky' },
+                ].map((speaker) => (
+                  <div key={speaker.name} className="flex flex-col items-center text-center gap-2.5 glass-card rounded-2xl px-3 py-5">
+                    <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-[3px] ${speaker.color} shadow-lg`}>
+                      <img src={speaker.image} alt={speaker.name} className="w-full h-full object-cover object-top" referrerPolicy="no-referrer" loading="eager" decoding="sync" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+                    </div>
+                    <div>
+                      <p className="text-white font-bold text-base leading-tight whitespace-pre-line">{speaker.name}</p>
+                      <p className="text-slate-300 text-sm mt-1">{speaker.role}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-white font-bold text-base leading-tight whitespace-pre-line">{speaker.name}</p>
-                    <p className="text-slate-300 text-sm mt-1">{speaker.role}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
-            {/* QR Code section */}
+            {/* QR Code section — always visible */}
             <div className="glass-card rounded-2xl px-5 py-4 flex items-center gap-4">
               <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-xl p-1.5 shrink-0">
                 <img src="/images/qr-register.png" alt="QR Đăng ký" className="w-full h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
@@ -809,7 +807,7 @@ export default function App() {
       </section>
 
       {/* SECTION: THỊ TRƯỜNG VIỆT NAM */}
-      <section id="market" className="py-16 md:py-24 bg-background-dark relative overflow-hidden">
+      <section id="market" className="py-10 md:py-24 bg-background-dark relative overflow-hidden -mt-px">
         {/* Background glow effects */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-primary/8 blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-accent-sky/5 blur-[100px] pointer-events-none" />
@@ -829,17 +827,17 @@ export default function App() {
               </span>
               <span>Thị trường nha khoa Việt Nam</span>
             </div>
-            <h2 className="font-headline text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight max-w-4xl mx-auto mb-5">
+            <h2 className="font-headline text-2xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight max-w-4xl mx-auto mb-3 md:mb-5">
               "Đại dương xanh" tỷ đô —{' '}
               <span className="bling-text">Mỏ vàng chưa được khai phá hết</span>
             </h2>
-            <p className="text-slate-400 text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
+            <p className="text-slate-400 text-sm md:text-lg leading-relaxed max-w-3xl mx-auto">
               Thị trường nha khoa thẩm mỹ Việt Nam đang ở giai đoạn "vàng" với nhu cầu tăng trưởng mạnh mẽ nhưng phần lớn các phòng khám chưa có giải pháp đủ tốt để nắm bắt được cơ hội này
             </p>
           </motion.div>
 
           {/* 3 stat cards — glass-card style */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8">
             {[
               { value: '90%', label: 'Người Việt có vấn đề về răng miệng', sub: '', accent: 'from-accent-beige to-amber-300' },
               { value: '1:10.000', label: 'Tỷ lệ BS RHM / Người dân', sub: 'Thiếu hụt trầm trọng nguồn nhân lực nha khoa chất lượng', accent: 'from-primary-light to-accent-sky' },
@@ -851,13 +849,13 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.15 }}
-                className="glass-card rounded-2xl px-7 py-8 md:px-8 md:py-10 relative overflow-hidden group"
+                className="glass-card rounded-2xl px-5 py-5 md:px-8 md:py-10 relative overflow-hidden group"
               >
                 <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-primary/10 blur-3xl pointer-events-none transition-all duration-500 group-hover:bg-primary/20" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-accent-sky/5 blur-2xl pointer-events-none" />
-                <p className={`relative z-10 text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-none bg-gradient-to-r ${item.accent} bg-clip-text text-transparent`}>{item.value}</p>
-                <p className="relative z-10 text-white text-lg md:text-xl font-bold mb-2">{item.label}</p>
-                {item.sub && <p className="relative z-10 text-slate-400 text-sm md:text-base leading-relaxed">{item.sub}</p>}
+                <p className={`relative z-10 text-3xl md:text-5xl lg:text-6xl font-black mb-2 md:mb-4 leading-none bg-gradient-to-r ${item.accent} bg-clip-text text-transparent`}>{item.value}</p>
+                <p className="relative z-10 text-white text-base md:text-xl font-bold mb-1 md:mb-2">{item.label}</p>
+                {item.sub && <p className="relative z-10 text-slate-400 text-xs md:text-base leading-relaxed">{item.sub}</p>}
               </motion.div>
             ))}
           </div>
@@ -886,28 +884,20 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-12 gap-y-8 md:gap-x-16 items-center">
             <div className="col-span-12 lg:col-span-6 flex items-center">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl w-full aspect-[4/5]">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl w-full aspect-[16/9] md:aspect-[4/5]">
                 <img src="/images/expert-vu-de-story.jpg" alt="Chuyên gia Vũ Đề" className="w-full h-full object-cover object-center" />
               </div>
             </div>
             <div className="col-span-12 lg:col-span-6">
               <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">
-                Khi thị trường thay đổi, và nỗi đau khách hàng ngày càng rõ ràng…
+                SmartVeneer — Công nghệ độc quyền thay đổi cuộc chơi phục hình thẩm mỹ
               </h2>
-              <p className="text-slate-600 text-base leading-relaxed mb-4">
-                Hơn 30 năm làm nghề, chuyên gia Vũ Đề luôn trăn trở một câu hỏi:
-              </p>
-              <div className="bg-primary/5 border-l-4 border-primary px-6 py-4 rounded-r-2xl mb-6">
-                <p className="font-black text-slate-900 text-lg md:text-xl leading-snug">
-                  Làm sao để cải thiện thẩm mỹ mà không phải đánh đổi quá nhiều mô răng thật?
-                </p>
-              </div>
               <p className="text-slate-600 text-base leading-relaxed mb-6">
-                Trải qua hành trình học tập và tiếp thu trên gần 50 quốc gia, cùng nhiều thử nghiệm và cả những thất bại, chuyên gia Vũ Đề đã tìm ra: <strong className="text-slate-900">Một công nghệ giúp bác sĩ và khách hàng không còn phải lựa chọn giữa thẩm mỹ và đánh đổi.</strong>
+                Gần <strong className="text-slate-900">30 năm</strong> kinh nghiệm phục hình răng, tiếp thu thực tiễn từ gần <strong className="text-slate-900">50 quốc gia</strong> và thấu hiểu sâu sắc nhóm khách hàng trung niên, chuyên gia Vũ Đề đã tìm ra một công nghệ giúp phòng khám <strong className="text-slate-900">khai thác đúng tệp khách hàng tiềm năng</strong>, đồng thời mở ra hướng đi mới trong phục hình thẩm mỹ bảo tồn, ít xâm lấn.
               </p>
-              <div className="mb-8">
-                <p className="text-slate-800 text-base leading-relaxed">
-                  Chuyên gia Vũ Đề mất hơn 30 năm "nằm gai nếm mật" để tìm ra giải pháp. Bạn chỉ cần <span className="font-black text-primary underline decoration-primary decoration-2 underline-offset-2">2 giờ tối 10/04</span> để hiểu rõ và biết cách ứng dụng tại phòng khám.
+              <div className="bg-primary/5 border-l-4 border-primary px-6 py-4 rounded-r-2xl mb-8">
+                <p className="text-slate-700 text-base leading-relaxed">
+                  Miếng dán bảo tồn SmartVeneer giúp <strong className="text-slate-900">cải thiện hình thể, màu sắc răng</strong>, các bệnh lý về vấn đề răng miệng, khắc phục được nhiều điểm hạn chế về <strong className="text-slate-900">khả năng cản màu, tính bền vững và độ an toàn</strong> so với phương pháp can thiệp thẩm mỹ khác trên thị trường.
                 </p>
               </div>
               <button
@@ -952,7 +942,7 @@ export default function App() {
             />
             <SpeakerCard
               name="Bác sĩ Vương Tiến Thịnh"
-              role="Bác sĩ thực chiến lâm sàng"
+              role="Bác sĩ thực hành lâm sàng tại nha khoa Dentisan"
               description="Bác sĩ đang triển khai SmartVeneer tại phòng khám, chia sẻ những kinh nghiệm thực tế, giúp rút ngắn thời gian thử nghiệm và nhanh chóng chuẩn hóa quy trình."
               image="/images/speaker-vuong-tin-thinh.jpg"
             />
@@ -963,23 +953,23 @@ export default function App() {
       {/* SECTION 5: AGENDA */}
       <section className="py-10 md:py-20 bg-background-dark text-white" id="agenda">
         <div className="max-w-4xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-10 md:mb-20">
-            <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4 bg-gradient-to-r from-white via-[#eaca8b] to-white bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(234,202,139,0.5)]">
+          <div className="text-center mb-6 md:mb-20">
+            <h2 className="font-headline text-xl sm:text-3xl md:text-4xl font-extrabold mb-3 md:mb-4 bg-gradient-to-r from-white via-[#eaca8b] to-white bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(234,202,139,0.5)]">
               Lộ trình 2 tiếng thay đổi tư duy và tương lai phát triển của phòng khám
             </h2>
-            <p className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-sm text-white/80 text-base font-medium px-5 py-2.5 rounded-full mt-2">
+            <p className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-sm text-white/80 text-sm md:text-base font-medium px-4 py-2 md:px-5 md:py-2.5 rounded-full mt-2">
               📧 Zoom link gửi qua email trước 18:00 ngày 10/04
             </p>
           </div>
-          <div className="space-y-4">
-            <AgendaItem index={0} time="20:00–20:15" title="Đón tiếp & Kết nối" description="Chuẩn bị kỹ thuật và giao lưu đầu giờ." />
-            <AgendaItem index={1} time="20:15–20:40" title="Bức tranh thị trường và nỗi đau phòng khám" description="Chuyên gia Vũ Đề chia sẻ tầm nhìn chiến lược." />
-            <AgendaItem index={2} time="20:40–21:10" title="Công nghệ giải phóng bàn tay bác sĩ" description="Thầy thuốc nhân dân, Tiến sĩ, Bác sĩ Lê Hưng đi sâu vào chuyên môn." highlight />
-            <AgendaItem index={3} time="21:10–21:25" title="Bài toán vận hành công nghệ mới tại phòng khám" description="Bà Trần Khánh Chi phân tích con số thực tế." highlight />
-            <AgendaItem index={4} time="21:25–21:40" title="Chuyện nghề thực chiến từ bác sĩ đang triển khai" description="Bác sĩ Vương Tiến Thịnh chia sẻ kinh nghiệm thực tế." />
-            <AgendaItem index={5} time="21:40–22:00" title="Giải pháp đồng hành toàn diện - Hỏi đáp - Quà tặng đặc biệt" description="Host chương trình điều phối phần thảo luận và công bố quà tặng." gold />
+          <div className="space-y-2 md:space-y-4">
+            <AgendaItem index={0} time="20:00–20:15" title="Đón tiếp & Kết nối" description="" />
+            <AgendaItem index={1} time="20:15–20:40" title="Bức tranh thị trường và nỗi đau phòng khám" description="" />
+            <AgendaItem index={2} time="20:40–21:10" title="Công nghệ giải phóng bàn tay bác sĩ" description="" highlight />
+            <AgendaItem index={3} time="21:10–21:25" title="Bài toán vận hành công nghệ mới tại phòng khám" description="" highlight />
+            <AgendaItem index={4} time="21:25–21:40" title="Chuyện nghề thực chiến từ bác sĩ đang triển khai" description="" />
+            <AgendaItem index={5} time="21:40–22:00" title="Giải pháp đồng hành toàn diện - Hỏi đáp - Quà tặng đặc biệt" description="" gold />
           </div>
-          <div className="mt-16 flex justify-center">
+          <div className="mt-8 md:mt-16 flex justify-center">
             <button
               className="bg-primary hover:bg-primary-light text-white px-8 py-3 md:py-4 rounded-full font-bold text-sm md:text-base transition-all shadow-lg shadow-primary/20 active:scale-95"
               onClick={() => document.getElementById('registration')?.scrollIntoView({ behavior: 'smooth' })}
