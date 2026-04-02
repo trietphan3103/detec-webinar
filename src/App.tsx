@@ -887,7 +887,7 @@ export default function App() {
           <div className="grid grid-cols-12 gap-y-8 md:gap-x-16 items-center">
             <div className="col-span-12 lg:col-span-6 flex items-center">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl w-full aspect-[4/5]">
-                <img src="/images/expert-vu-de-story.png" alt="Chuyên gia Vũ Đề" className="w-full h-full object-cover object-center" />
+                <img src="/images/expert-vu-de-story.jpg" alt="Chuyên gia Vũ Đề" className="w-full h-full object-cover object-center" />
               </div>
             </div>
             <div className="col-span-12 lg:col-span-6">
