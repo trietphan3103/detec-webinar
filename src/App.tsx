@@ -119,7 +119,7 @@ const Navbar = () => {
             Đăng ký ngay
           </a>
           <img
-            src={isScrolled ? '/images/detec-logo.svg' : '/images/detec-white-logo.svg'}
+            src={isScrolled ? '/images/logo-detec-2.png' : '/images/logo-detec.png'}
             alt="DETEC"
             className={`h-7 hidden lg:block ${isScrolled ? 'opacity-90' : 'opacity-80'}`}
           />
@@ -1108,7 +1108,7 @@ export default function App() {
             className="text-center mb-12 md:mb-16"
           >
             <h2 className="font-headline text-2xl sm:text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight max-w-3xl mx-auto">
-              Con số ấn tượng và bảo chứng từ bác sĩ, Chủ phòng khám
+              Con số ấn tượng và bảo chứng từ bác sĩ, chủ phòng khám
             </h2>
           </motion.div>
 
