@@ -216,7 +216,7 @@ const SpeakerCard = ({ name, role, roleBullets, description, image, quote, image
     </div>
     <h3 className="text-xl font-bold text-slate-900 mb-1">{name}</h3>
     {roleBullets ? (
-      <ul className="text-sm text-primary font-semibold mb-2 space-y-0.5">
+      <ul className="text-sm text-primary font-semibold mb-0 space-y-0.5">
         {roleBullets.map((item, i) => (
           <li key={i} className="flex items-start gap-1.5"><span className="mt-1 shrink-0">•</span><span>{item}</span></li>
         ))}
