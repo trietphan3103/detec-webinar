@@ -773,8 +773,8 @@ export default function App() {
               <p className="text-sm font-black tracking-[0.2em] text-slate-300 uppercase mb-5 text-center lg:text-right">Chuyên gia đồng hành</p>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 {[
-                  { name: 'Chuyên gia\nVũ Đề', role: 'Nhà sáng chế SmartVeneer', image: '/images/speaker-vu-de-thumb.jpg', color: 'border-primary' },
-                  { name: 'TTND.TS.BS\nLê Hưng', role: 'Nhà phát triển SmartVeneer', image: '/images/speaker-le-hung-thumb.jpg', color: 'border-accent-beige' },
+                  { name: 'Chuyên gia\nVũ Đề', role: 'Nhà sáng chế công nghệ SmartVeneer', image: '/images/speaker-vu-de-thumb.jpg', color: 'border-primary' },
+                  { name: 'TTND.TS.BS\nLê Hưng', role: 'Nhà phát triển công nghệ SmartVeneer', image: '/images/speaker-le-hung-thumb.jpg', color: 'border-accent-beige' },
                   { name: 'Bà Trần\nKhánh Chi', role: 'Giám đốc Vận hành Dentisan', image: '/images/speaker-khanh-chi-thumb.jpg', color: 'border-emerald-400' },
                   { name: 'BS. Vương\nTiến Thịnh', role: 'Bác sĩ thực hành lâm sàng tại Nha khoa Dentisan', image: '/images/speaker-vuong-tin-thinh-thumb.jpg', color: 'border-accent-sky' },
                 ].map((speaker) => (
