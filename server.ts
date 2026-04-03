@@ -1,4 +1,11 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
+
+// Load theo độ ưu tiên tăng dần (giống Vite/Next.js)
+const NODE_ENV = process.env.NODE_ENV || 'development';
+config({ path: '.env' });
+config({ path: `.env.${NODE_ENV}`, override: true });
+config({ path: '.env.local', override: true });
+config({ path: `.env.${NODE_ENV}.local`, override: true });
 import express from 'express';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
