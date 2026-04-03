@@ -1,29 +1,22 @@
-# Stage 1: Build
+# Stage 1: Build React app
 FROM node:20-alpine AS builder
 
 WORKDIR /app
-
 COPY package*.json ./
 RUN npm ci
-
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve with nginx
-FROM nginx:alpine
+# Stage 2: Run Express server
+FROM node:20-alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY --from=builder /app/dist ./dist
+COPY server.ts ./
+COPY .env* ./
 
-# SPA fallback: redirect all routes to index.html
-RUN echo 'server { \
-    listen 80; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
+EXPOSE 8080
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npx", "tsx", "server.ts"]
