@@ -1147,7 +1147,6 @@ function AnalyticsTab() {
             <FunnelBar label="Time 60s+" count={t.TimeOnSite60s ?? 0} base={pv} color="bg-orange-400" />
             <FunnelBar label="Time 120s+" count={t.TimeOnSite120s ?? 0} base={pv} color="bg-red-400" />
             <div className="border-t border-dashed border-slate-200 my-1" />
-            <FunnelBar label="FormSubmit (pixel)" count={fs} base={pv} color="bg-blue-400" />
             <FunnelBar label="Leads thực (DB)" count={leads} base={pv} color="bg-emerald-500" />
           </div>
         </div>

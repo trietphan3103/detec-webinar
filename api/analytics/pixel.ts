@@ -50,9 +50,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const day = hour.start_time.slice(0, 10);
       if (!dailyMap[day]) dailyMap[day] = {};
       for (const evt of hour.data ?? []) {
-        if (evt.value === 'FormSubmit') continue; // use deduplicated SERVER count instead
         dailyMap[day][evt.value] = (dailyMap[day][evt.value] ?? 0) + evt.count;
-        totals[evt.value] = (totals[evt.value] ?? 0) + evt.count;
+        if (evt.value !== 'FormSubmit') {
+          totals[evt.value] = (totals[evt.value] ?? 0) + evt.count;
+        }
       }
     }
 

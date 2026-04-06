@@ -151,10 +151,10 @@ app.get('/api/analytics/pixel', async (req, res) => {
       const day = hour.start_time.slice(0, 10);
       if (!dailyMap[day]) dailyMap[day] = {};
       for (const evt of hour.data ?? []) {
-        // Skip FormSubmit from raw totals — we'll use deduplicated SERVER count instead
-        if (evt.value === 'FormSubmit') continue;
         dailyMap[day][evt.value] = (dailyMap[day][evt.value] ?? 0) + evt.count;
-        totals[evt.value] = (totals[evt.value] ?? 0) + evt.count;
+        if (evt.value !== 'FormSubmit') {
+          totals[evt.value] = (totals[evt.value] ?? 0) + evt.count;
+        }
       }
     }
 
