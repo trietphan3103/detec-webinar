@@ -964,7 +964,7 @@ export default function App() {
           <div className="space-y-2 md:space-y-4">
             <AgendaItem index={0} time="20:00–20:15" title="Đón tiếp & Kết nối" description="" />
             <AgendaItem index={1} time="20:15–20:40" title="Bức tranh thị trường và nỗi đau phòng khám" description="" />
-            <AgendaItem index={2} time="20:40–21:10" title="Công nghệ giải phóng bàn tay bác sĩ" description="" highlight />
+            <AgendaItem index={2} time="20:40–21:10" title="Công nghệ giải phóng thời gian bác sĩ" description="" highlight />
             <AgendaItem index={3} time="21:10–21:25" title="Bài toán vận hành công nghệ mới tại phòng khám" description="" highlight />
             <AgendaItem index={4} time="21:25–21:40" title="Chuyện nghề thực chiến từ bác sĩ đang triển khai" description="" />
             <AgendaItem index={5} time="21:40–22:00" title="Giải pháp đồng hành toàn diện - Hỏi đáp - Quà tặng đặc biệt" description="" gold />

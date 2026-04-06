@@ -31,6 +31,24 @@ function getToken() { return localStorage.getItem('detec_admin_token') || ''; }
 function setToken(t: string) { localStorage.setItem('detec_admin_token', t); }
 function clearToken() { localStorage.removeItem('detec_admin_token'); }
 
+// ─── Export CSV (mở được bằng Excel) ───
+function exportCSV(data: Record<string, unknown>[], filename: string) {
+  if (data.length === 0) { alert('Không có dữ liệu để xuất.'); return; }
+  const headers = Object.keys(data[0]);
+  const escape = (val: unknown) => {
+    const s = String(val ?? '');
+    return s.includes(',') || s.includes('"') || s.includes('\n')
+      ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const rows = [headers.map(escape), ...data.map(row => headers.map(h => escape(row[h])))];
+  const csv = '\uFEFF' + rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     ...opts,
@@ -305,6 +323,15 @@ function UsersTab() {
             onChange={e => setSearch(e.target.value)}
             className="flex-1 sm:w-64 px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
           />
+          <button
+            onClick={() => exportCSV(
+              filtered.map(u => ({ ID: u.id, 'Họ tên': u.name, Email: u.email, 'SĐT': u.phone, 'Thành phố': u.city, 'Phòng khám': u.clinic_name, 'Ngày tạo': u.created_at ?? '' })),
+              `hoc-vien-${new Date().toISOString().slice(0,10)}.csv`
+            )}
+            className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-500 transition whitespace-nowrap"
+          >
+            ↓ Excel
+          </button>
           <button onClick={() => setModal('create')} className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition whitespace-nowrap">
             + Thêm
           </button>
@@ -460,13 +487,24 @@ function SubmitLogsTab() {
           <h2 className="text-xl font-bold text-slate-900">Lịch sử đăng ký</h2>
           <p className="text-slate-500 text-sm">{logs.length} lượt đăng ký</p>
         </div>
-        <input
-          type="text"
-          placeholder="Tìm kiếm..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="w-full sm:w-64 px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
-        />
+        <div className="flex gap-3 w-full sm:w-auto">
+          <input
+            type="text"
+            placeholder="Tìm kiếm..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="flex-1 sm:w-64 px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+          />
+          <button
+            onClick={() => exportCSV(
+              filtered.map(l => ({ ID: l.id, 'Họ tên': l.name, Email: l.email, 'SĐT': l.phone, 'Thành phố': l.city, 'Phòng khám': l.clinic_name, 'Thời gian đăng ký': formatDate(l.submitted_at) })),
+              `lich-su-dang-ky-${new Date().toISOString().slice(0,10)}.csv`
+            )}
+            className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-500 transition whitespace-nowrap"
+          >
+            ↓ Excel
+          </button>
+        </div>
       </div>
 
       {/* Desktop table */}
