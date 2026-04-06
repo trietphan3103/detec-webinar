@@ -19,6 +19,14 @@ export default defineConfig(({ mode }) => {
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
       proxy: {
+        '/api/analytics': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+        },
+        '/api/analytics/ads': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+        },
         '/api/submit': {
           target: env.DETEC_API_URL || 'https://detec-webinar.mona.academy',
           changeOrigin: true,
