@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import * as XLSX from 'xlsx';
 
 const API_BASE = 'https://detec-webinar.mona.academy';
 
@@ -31,7 +32,7 @@ function getToken() { return localStorage.getItem('detec_admin_token') || ''; }
 function setToken(t: string) { localStorage.setItem('detec_admin_token', t); }
 function clearToken() { localStorage.removeItem('detec_admin_token'); }
 
-// ─── Export CSV (mở được bằng Excel) ───
+// ─── Export helpers ───
 function exportCSV(data: Record<string, unknown>[], filename: string) {
   if (data.length === 0) { alert('Không có dữ liệu để xuất.'); return; }
   const headers = Object.keys(data[0]);
@@ -47,6 +48,55 @@ function exportCSV(data: Record<string, unknown>[], filename: string) {
   const a = document.createElement('a');
   a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
+}
+
+function exportXLSX(data: Record<string, unknown>[], filename: string) {
+  if (data.length === 0) { alert('Không có dữ liệu để xuất.'); return; }
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Data');
+  XLSX.writeFile(wb, filename);
+}
+
+function ExportDropdown({ onCSV, onXLSX }: { onCSV: () => void; onXLSX: () => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-1 bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-500 transition whitespace-nowrap"
+      >
+        ↓ Export
+        <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-1 w-36 bg-white border border-slate-200 rounded-lg shadow-lg z-20 overflow-hidden">
+          <button
+            onClick={() => { onCSV(); setOpen(false); }}
+            className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition flex items-center gap-2"
+          >
+            <span>📄</span> CSV
+          </button>
+          <button
+            onClick={() => { onXLSX(); setOpen(false); }}
+            className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition flex items-center gap-2 border-t border-slate-100"
+          >
+            <span>📊</span> XLSX
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
@@ -355,15 +405,16 @@ function UsersTab() {
             onChange={e => setSearch(e.target.value)}
             className="flex-1 sm:w-64 px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
           />
-          <button
-            onClick={() => exportCSV(
+          <ExportDropdown
+            onCSV={() => exportCSV(
               filtered.map(u => ({ ID: u.id, 'Họ tên': u.name, Email: u.email, 'SĐT': u.phone, 'Thành phố': u.city, 'Phòng khám': u.clinic_name, 'Ngày tạo': u.created_at ?? '' })),
               `hoc-vien-${new Date().toISOString().slice(0,10)}.csv`
             )}
-            className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-500 transition whitespace-nowrap"
-          >
-            ↓ Excel
-          </button>
+            onXLSX={() => exportXLSX(
+              filtered.map(u => ({ ID: u.id, 'Họ tên': u.name, Email: u.email, 'SĐT': u.phone, 'Thành phố': u.city, 'Phòng khám': u.clinic_name, 'Ngày tạo': u.created_at ?? '' })),
+              `hoc-vien-${new Date().toISOString().slice(0,10)}.xlsx`
+            )}
+          />
           <button onClick={() => setModal('create')} className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition whitespace-nowrap">
             + Thêm
           </button>
@@ -527,15 +578,16 @@ function SubmitLogsTab() {
             onChange={e => setSearch(e.target.value)}
             className="flex-1 sm:w-64 px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
           />
-          <button
-            onClick={() => exportCSV(
+          <ExportDropdown
+            onCSV={() => exportCSV(
               filtered.map(l => ({ ID: l.id, 'Họ tên': l.name, Email: l.email, 'SĐT': l.phone, 'Thành phố': l.city, 'Phòng khám': l.clinic_name, 'Thời gian đăng ký': formatDate(l.submitted_at) })),
               `lich-su-dang-ky-${new Date().toISOString().slice(0,10)}.csv`
             )}
-            className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-500 transition whitespace-nowrap"
-          >
-            ↓ Excel
-          </button>
+            onXLSX={() => exportXLSX(
+              filtered.map(l => ({ ID: l.id, 'Họ tên': l.name, Email: l.email, 'SĐT': l.phone, 'Thành phố': l.city, 'Phòng khám': l.clinic_name, 'Thời gian đăng ký': formatDate(l.submitted_at) })),
+              `lich-su-dang-ky-${new Date().toISOString().slice(0,10)}.xlsx`
+            )}
+          />
         </div>
       </div>
 
