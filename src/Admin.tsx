@@ -58,13 +58,20 @@ async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
       ...opts.headers,
     },
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 403) {
     clearToken();
     window.location.href = '/admin';
     throw new Error('Phiên đăng nhập hết hạn');
   }
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  if (!res.ok) {
+    const msg = data.error || `HTTP ${res.status}`;
+    if (/unauthorized|unauthenticated|token/i.test(msg)) {
+      clearToken();
+      window.location.href = '/admin';
+    }
+    throw new Error(msg);
+  }
   return data;
 }
 
