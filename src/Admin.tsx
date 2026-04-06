@@ -324,8 +324,7 @@ function UsersTab() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [modal, setModal] = useState<'create' | 'edit' | null>(null);
-  const [editing, setEditing] = useState<User | null>(null);
+  const [modal, setModal] = useState<'create' | null>(null);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
 
@@ -353,31 +352,6 @@ function UsersTab() {
       alert(err.message);
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleUpdate = async (data: Partial<User>) => {
-    if (!editing) return;
-    setSaving(true);
-    try {
-      await api(`/admin/users/${editing.id}`, { method: 'PUT', body: JSON.stringify(data) });
-      setModal(null);
-      setEditing(null);
-      fetchUsers();
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async (user: User) => {
-    if (!confirm(`Xóa học viên "${user.name}"?`)) return;
-    try {
-      await api(`/admin/users/${user.id}`, { method: 'DELETE' });
-      fetchUsers();
-    } catch (err: any) {
-      alert(err.message);
     }
   };
 
@@ -433,7 +407,6 @@ function UsersTab() {
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">SĐT</th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Thành phố</th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Phòng khám</th>
-                <th className="text-right px-4 py-3 font-semibold text-slate-600">Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -445,14 +418,10 @@ function UsersTab() {
                   <td className="px-4 py-3 text-slate-600">{user.phone}</td>
                   <td className="px-4 py-3 text-slate-600">{user.city}</td>
                   <td className="px-4 py-3 text-slate-600">{user.clinic_name}</td>
-                  <td className="px-4 py-3 text-right">
-                    <button onClick={() => { setEditing(user); setModal('edit'); }} className="text-primary hover:text-primary/70 font-medium mr-3">Sửa</button>
-                    <button onClick={() => handleDelete(user)} className="text-red-500 hover:text-red-400 font-medium">Xóa</button>
-                  </td>
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={7} className="px-4 py-10 text-center text-slate-400">Không có dữ liệu</td></tr>
+                <tr><td colSpan={6} className="px-4 py-10 text-center text-slate-400">Không có dữ liệu</td></tr>
               )}
             </tbody>
           </table>
@@ -467,10 +436,6 @@ function UsersTab() {
               <div>
                 <p className="font-semibold text-slate-900">{user.name}</p>
                 <p className="text-xs text-slate-400">#{user.id}</p>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => { setEditing(user); setModal('edit'); }} className="text-primary text-sm font-medium">Sửa</button>
-                <button onClick={() => handleDelete(user)} className="text-red-500 text-sm font-medium">Xóa</button>
               </div>
             </div>
             <div className="space-y-1 text-sm text-slate-600">
@@ -489,11 +454,6 @@ function UsersTab() {
           <UserForm onSubmit={handleCreate} onCancel={() => setModal(null)} loading={saving} />
         </Modal>
       )}
-      {modal === 'edit' && editing && (
-        <Modal title="Sửa học viên" onClose={() => { setModal(null); setEditing(null); }}>
-          <UserForm initial={editing} onSubmit={handleUpdate} onCancel={() => { setModal(null); setEditing(null); }} loading={saving} />
-        </Modal>
-      )}
     </div>
   );
 }
@@ -503,9 +463,6 @@ function SubmitLogsTab() {
   const [logs, setLogs] = useState<SubmitLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [modal, setModal] = useState<'edit' | null>(null);
-  const [editing, setEditing] = useState<SubmitLog | null>(null);
-  const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
 
   const fetchLogs = useCallback(async () => {
@@ -521,31 +478,6 @@ function SubmitLogsTab() {
   }, []);
 
   useEffect(() => { fetchLogs(); }, [fetchLogs]);
-
-  const handleUpdate = async (data: Partial<SubmitLog>) => {
-    if (!editing) return;
-    setSaving(true);
-    try {
-      await api(`/admin/submit-logs/${editing.id}`, { method: 'PUT', body: JSON.stringify(data) });
-      setModal(null);
-      setEditing(null);
-      fetchLogs();
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async (log: SubmitLog) => {
-    if (!confirm(`Xóa log #${log.id} của "${log.name}"?`)) return;
-    try {
-      await api(`/admin/submit-logs/${log.id}`, { method: 'DELETE' });
-      fetchLogs();
-    } catch (err: any) {
-      alert(err.message);
-    }
-  };
 
   const formatDate = (d: string) => {
     if (!d) return '—';
@@ -604,7 +536,6 @@ function SubmitLogsTab() {
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Thành phố</th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Phòng khám</th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Thời gian</th>
-                <th className="text-right px-4 py-3 font-semibold text-slate-600">Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -617,14 +548,10 @@ function SubmitLogsTab() {
                   <td className="px-4 py-3 text-slate-600">{log.city}</td>
                   <td className="px-4 py-3 text-slate-600">{log.clinic_name}</td>
                   <td className="px-4 py-3 text-slate-500 text-xs">{formatDate(log.submitted_at)}</td>
-                  <td className="px-4 py-3 text-right">
-                    <button onClick={() => { setEditing(log); setModal('edit'); }} className="text-primary hover:text-primary/70 font-medium mr-3">Sửa</button>
-                    <button onClick={() => handleDelete(log)} className="text-red-500 hover:text-red-400 font-medium">Xóa</button>
-                  </td>
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={8} className="px-4 py-10 text-center text-slate-400">Không có dữ liệu</td></tr>
+                <tr><td colSpan={7} className="px-4 py-10 text-center text-slate-400">Không có dữ liệu</td></tr>
               )}
             </tbody>
           </table>
@@ -635,15 +562,9 @@ function SubmitLogsTab() {
       <div className="md:hidden space-y-3">
         {filtered.map(log => (
           <div key={log.id} className="bg-white rounded-xl border border-slate-200 p-4">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <p className="font-semibold text-slate-900">{log.name}</p>
-                <p className="text-xs text-slate-400">#{log.id} · {formatDate(log.submitted_at)}</p>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => { setEditing(log); setModal('edit'); }} className="text-primary text-sm font-medium">Sửa</button>
-                <button onClick={() => handleDelete(log)} className="text-red-500 text-sm font-medium">Xóa</button>
-              </div>
+            <div className="mb-2">
+              <p className="font-semibold text-slate-900">{log.name}</p>
+              <p className="text-xs text-slate-400">#{log.id} · {formatDate(log.submitted_at)}</p>
             </div>
             <div className="space-y-1 text-sm text-slate-600">
               {log.email && <p>📧 {log.email}</p>}
@@ -656,11 +577,6 @@ function SubmitLogsTab() {
         {filtered.length === 0 && <p className="text-center text-slate-400 py-10">Không có dữ liệu</p>}
       </div>
 
-      {modal === 'edit' && editing && (
-        <Modal title="Sửa log đăng ký" onClose={() => { setModal(null); setEditing(null); }}>
-          <SubmitLogForm initial={editing} onSubmit={handleUpdate} onCancel={() => { setModal(null); setEditing(null); }} loading={saving} />
-        </Modal>
-      )}
     </div>
   );
 }
@@ -892,10 +808,10 @@ function TrafficSourceCard({ daily, adsData }: { daily: DailyRow[]; adsData?: Ad
   );
 }
 
-function AdsPerformanceSection({ adsData, pixelData }: { adsData: AdsData; pixelData: PixelData }) {
+function AdsPerformanceSection({ adsData, pixelData, dbLeads }: { adsData: AdsData; pixelData: PixelData; dbLeads: number | null }) {
   const campaigns = adsData.campaigns;
   const totalPixelPV = pixelData.totals.PageView ?? 0;
-  const totalPixelFS = pixelData.totals.FormSubmit ?? 0;
+  const totalPixelFS = dbLeads ?? (pixelData.totals.FormSubmit ?? 0); // dùng DB leads nếu có
   const totalAdsLPV = campaigns.reduce((s, c) => s + c.landing_page_views, 0);
   const totalAdsSpend = campaigns.reduce((s, c) => s + c.spend, 0);
   const totalAdsImpr = campaigns.reduce((s, c) => s + c.impressions, 0);
@@ -1017,10 +933,11 @@ function AdsPerformanceSection({ adsData, pixelData }: { adsData: AdsData; pixel
 
       {/* Ads vs Organic CVR comparison */}
       {totalAdsLPV > 0 && totalPixelPV > 0 && (() => {
-        const adsConv = totalAdsConv > 0 ? totalAdsConv : Math.round(totalPixelFS * totalAdsLPV / totalPixelPV);
+        // Ads leads = từ Ads Manager report, Organic = DB leads - ads
+        const adsConv = totalAdsConv;
         const adsLPVn = totalAdsLPV;
         const orgSessions = Math.max(totalPixelPV - adsLPVn, 0);
-        const orgConv = Math.max(totalPixelFS - adsConv, 0);
+        const orgConv = Math.max(totalPixelFS - adsConv, 0); // totalPixelFS = dbLeads
         const adsCVR = adsLPVn > 0 ? +(adsConv / adsLPVn * 100).toFixed(1) : 0;
         const orgCVR = orgSessions > 0 ? +(orgConv / orgSessions * 100).toFixed(1) : 0;
         return (
@@ -1084,47 +1001,14 @@ function AdsPerformanceSection({ adsData, pixelData }: { adsData: AdsData; pixel
   );
 }
 
-function SessionQualityCard({ hourly }: { hourly: HourRow[] }) {
-  const qualityHours = hourly.filter(h => {
-    const pv = h.PageView ?? 0; const fs = h.FormSubmit ?? 0; const t30 = h.TimeOnSite30s ?? 0; const s25 = h.ViewContentScroll25 ?? 0;
-    return fs > 0 && (t30 >= fs || s25 >= fs);
-  });
-  const suspectHours = hourly.filter(h => {
-    const pv = h.PageView ?? 0; const fs = h.FormSubmit ?? 0; const t30 = h.TimeOnSite30s ?? 0; const s25 = h.ViewContentScroll25 ?? 0;
-    return fs > 0 && t30 < fs && s25 < fs;
-  });
-  const qualitySubmits = qualityHours.reduce((s, h) => s + (h.FormSubmit ?? 0), 0);
-  const suspectSubmits = suspectHours.reduce((s, h) => s + (h.FormSubmit ?? 0), 0);
-  const total = qualitySubmits + suspectSubmits;
 
-  return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5">
-      <div className="text-sm font-bold text-slate-700 mb-1">Chất lượng phiên submit</div>
-      <div className="text-xs text-slate-400 mb-4">Giờ có FormSubmit kèm engagement (Scroll25 hoặc Time30s) vs không có</div>
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-center">
-          <div className="text-2xl font-extrabold text-emerald-600">{qualitySubmits}</div>
-          <div className="text-xs text-emerald-700 font-medium mt-0.5">Có engagement</div>
-          <div className="text-xs text-slate-400">{pct(qualitySubmits, total)}% tổng leads</div>
-        </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-center">
-          <div className="text-2xl font-extrabold text-amber-600">{suspectSubmits}</div>
-          <div className="text-xs text-amber-700 font-medium mt-0.5">Submit nhanh</div>
-          <div className="text-xs text-slate-400">{pct(suspectSubmits, total)}% — vào thẳng form</div>
-        </div>
-      </div>
-      <div className="text-xs text-slate-500 bg-slate-50 rounded-lg p-3">
-        <strong>Giải thích:</strong> "Submit nhanh" không phải fake — form nằm đầu trang nên user có intent cao submit ngay mà chưa kịp scroll. Cả 2 nhóm đều là lead thật.
-      </div>
-    </div>
-  );
-}
 
 function toDateInput(d: Date) { return d.toISOString().slice(0, 10); }
 
 function AnalyticsTab() {
   const [data, setData] = useState<PixelData | null>(null);
   const [adsData, setAdsData] = useState<AdsData | null>(null);
+  const [dbLeads, setDbLeads] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [days, setDays] = useState(7);
@@ -1136,18 +1020,42 @@ function AnalyticsTab() {
     setLoading(true); setError('');
     try {
       const params = f || t ? `from=${f || ''}&to=${t || ''}` : `days=${d}`;
-      const [pixelRes, adsRes] = await Promise.all([
+
+      // Derive date range for DB filtering
+      const sinceDate = f || new Date(Date.now() - d * 86400000).toISOString().slice(0, 10);
+      const untilDate = t || new Date().toISOString().slice(0, 10);
+
+      const [pixelRes, adsRes, logsRes] = await Promise.all([
         fetch(`/api/analytics/pixel?${params}`),
         fetch(`/api/analytics/ads?${params}`),
+        fetch(`${API_BASE}/admin/submit-logs`, {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        }),
       ]);
+
       if (!pixelRes.ok) throw new Error(await pixelRes.text());
       setData(await pixelRes.json());
-      // Ads may fail if token lacks ads_read — don't throw, just store
+
       if (adsRes.ok) {
         const ads = await adsRes.json() as AdsData;
         setAdsData(ads.error ? null : ads);
       } else {
         setAdsData(null);
+      }
+
+      // Count DB leads within date range
+      if (logsRes.ok) {
+        const logsJson = await logsRes.json() as { data?: SubmitLog[] } | SubmitLog[];
+        const logs = Array.isArray(logsJson) ? logsJson : (logsJson.data ?? []);
+        const sinceTs = new Date(sinceDate).getTime();
+        const untilTs = new Date(untilDate).getTime() + 86400000; // inclusive end of day
+        const count = logs.filter(l => {
+          const ts = new Date(l.submitted_at).getTime();
+          return ts >= sinceTs && ts < untilTs;
+        }).length;
+        setDbLeads(count);
+      } else {
+        setDbLeads(null);
       }
     } catch (e) {
       setError(String(e));
@@ -1167,8 +1075,10 @@ function AnalyticsTab() {
 
   const t = data.totals;
   const pv = t.PageView ?? 0;
-  const fs = t.FormSubmit ?? 0;
-  const cvr = pct(fs, pv);
+  const fs = t.FormSubmit ?? 0;        // pixel events (có thể trùng/lỗi)
+  const leads = dbLeads ?? fs;          // DB leads = submit thành công thực
+  const cvr = pct(leads, pv);
+  const pixelCvr = pct(fs, pv);
   const engaged = t.TimeOnSite30s ?? 0;
 
   return (
@@ -1214,8 +1124,8 @@ function AnalyticsTab() {
       {/* KPI cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KpiCard label="Sessions" value={pv.toLocaleString()} sub={`${data.days} ngày`} />
-        <KpiCard label="Leads" value={fs.toLocaleString()} sub="FormSubmit" />
-        <KpiCard label="CVR" value={`${cvr}%`} sub="Submit / PageView"
+        <KpiCard label="Leads (DB)" value={leads.toLocaleString()} sub={`${data.days} ngày`} />
+        <KpiCard label="CVR thực" value={`${cvr}%`} sub="DB leads / PageView"
           status={<StatusBadge value={cvr} warn={8} bad={3} />} />
         <KpiCard label="Engaged (30s+)" value={`${pct(engaged, pv)}%`} sub={`${engaged.toLocaleString()} người`}
           status={<StatusBadge value={pct(engaged, pv)} warn={40} bad={20} />} />
@@ -1237,12 +1147,13 @@ function AnalyticsTab() {
             <FunnelBar label="Time 60s+" count={t.TimeOnSite60s ?? 0} base={pv} color="bg-orange-400" />
             <FunnelBar label="Time 120s+" count={t.TimeOnSite120s ?? 0} base={pv} color="bg-red-400" />
             <div className="border-t border-dashed border-slate-200 my-1" />
-            <FunnelBar label="FormSubmit ✓" count={fs} base={pv} color="bg-emerald-500" />
+            <FunnelBar label="FormSubmit (pixel)" count={fs} base={pv} color="bg-blue-400" />
+            <FunnelBar label="Leads thực (DB)" count={leads} base={pv} color="bg-emerald-500" />
           </div>
         </div>
 
         {/* Daily chart */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 self-start">
           <div className="text-sm font-bold text-slate-700 mb-1">Sessions theo ngày</div>
           <div className="text-xs text-slate-400 mb-4">Xanh = leads · Xám = sessions · % = CVR</div>
           <div>
@@ -1257,14 +1168,11 @@ function AnalyticsTab() {
 
       {/* Hourly + Source + Session quality */}
       <HourlyCVRChart data={data.hourly} />
-      <div className="grid md:grid-cols-2 gap-4">
-        <TrafficSourceCard daily={data.daily} adsData={adsData} />
-        <SessionQualityCard hourly={data.hourly} />
-      </div>
+      <TrafficSourceCard daily={data.daily} adsData={adsData} />
 
       {/* Ads Performance */}
       {adsData && adsData.campaigns?.length > 0 ? (
-        <AdsPerformanceSection adsData={adsData} pixelData={data} />
+        <AdsPerformanceSection adsData={adsData} pixelData={data} dbLeads={dbLeads} />
       ) : (
         <div className="bg-slate-50 border border-dashed border-slate-200 rounded-xl p-5 text-center text-xs text-slate-400">
           Không có dữ liệu Ads — token cần quyền <code className="bg-slate-100 px-1 rounded">ads_read</code>

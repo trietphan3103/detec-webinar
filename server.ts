@@ -116,31 +116,58 @@ app.get('/api/analytics/pixel', async (req, res) => {
   const endTime = toParam ? Math.floor(new Date(toParam).getTime() / 1000) + 86400 : undefined;
 
   try {
-    const url = `https://graph.facebook.com/v19.0/${pixelId}/stats?start_time=${startTime}${endTime ? `&end_time=${endTime}` : ''}&aggregation=event&access_token=${token}`;
-    const r = await fetch(url);
+    const baseParams = `start_time=${startTime}${endTime ? `&end_time=${endTime}` : ''}&access_token=${token}`;
+    const [r, fsSourceRes] = await Promise.all([
+      fetch(`https://graph.facebook.com/v19.0/${pixelId}/stats?${baseParams}&aggregation=event`),
+      fetch(`https://graph.facebook.com/v19.0/${pixelId}/stats?${baseParams}&event=FormSubmit&aggregation=event_source`),
+    ]);
     const json = await r.json() as { data?: Array<{ start_time: string; data: Array<{ value: string; count: number }> }>; error?: unknown };
     if (!r.ok) return res.status(r.status).json(json);
+
+    // FormSubmit SERVER count (CAPI) = 1:1 with real submits, no browser+CAPI double-count
+    let fsServer = 0;
+    if (fsSourceRes.ok) {
+      const fsJson = await fsSourceRes.json() as { data?: Array<{ data: Array<{ value: string; count: number }> }> };
+      for (const h of fsJson.data ?? []) {
+        for (const e of h.data ?? []) {
+          if (e.value === 'SERVER') fsServer += e.count;
+        }
+      }
+    }
+
+    // Dedup buckets by start_time
+    const seenBuckets = new Set<string>();
+    const uniqueHours = (json.data ?? []).filter(h => {
+      if (seenBuckets.has(h.start_time)) return false;
+      seenBuckets.add(h.start_time);
+      return true;
+    });
 
     // Aggregate by day
     const dailyMap: Record<string, Record<string, number>> = {};
     const totals: Record<string, number> = {};
 
-    for (const hour of json.data ?? []) {
+    for (const hour of uniqueHours) {
       const day = hour.start_time.slice(0, 10);
       if (!dailyMap[day]) dailyMap[day] = {};
       for (const evt of hour.data ?? []) {
+        // Skip FormSubmit from raw totals — we'll use deduplicated SERVER count instead
+        if (evt.value === 'FormSubmit') continue;
         dailyMap[day][evt.value] = (dailyMap[day][evt.value] ?? 0) + evt.count;
         totals[evt.value] = (totals[evt.value] ?? 0) + evt.count;
       }
     }
 
+    // Use CAPI (SERVER) count as deduplicated FormSubmit
+    totals['FormSubmit'] = fsServer;
+
     const daily = Object.entries(dailyMap)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([date, evts]) => ({ date, ...evts }));
 
-    // Aggregate by hour-of-day (0–23) across all days
+    // Aggregate by hour-of-day (0–23) across all days (FormSubmit uses raw for trend shape)
     const hourMap: Record<number, Record<string, number>> = {};
-    for (const hour of json.data ?? []) {
+    for (const hour of uniqueHours) {
       const h = (parseInt(hour.start_time.slice(11, 13), 10) + 7) % 24; // UTC+7
       if (!hourMap[h]) hourMap[h] = {};
       for (const evt of hour.data ?? []) {

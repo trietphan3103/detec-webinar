@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080" />
+  <title>SmartVeneer — Bài Toán Thực Tế</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 1080px;
+      height: 1350px;
+      overflow: hidden;
+      background: #ffffff;
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+
+    /* ─── CANVAS WRAPPER ─── */
+    .canvas {
+      width: 1080px;
+      height: 1350px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* ─── ZONE 1: HEADER — 30% = 405px ─── */
+    .zone-header {
+      width: 100%;
+      height: 405px;
+      background: #0D1B4B;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle background texture */
+    .zone-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 600px 300px at 50% 110%, rgba(45,107,228,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 200px at 80% 20%, rgba(126,179,255,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* decorative grid dots */
+    .zone-header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(126,179,255,0.12) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .header-eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 5px;
+      color: #7EB3FF;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-eyebrow::before,
+    .header-eyebrow::after {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: #7EB3FF;
+      opacity: 0.6;
+    }
+
+    .header-title {
+      font-size: 56px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-title span {
+      color: #7EB3FF;
+    }
+
+    .header-subtitle {
+      font-size: 15px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 1px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── ZONE 2: INFOGRAPHIC — 50% = 675px ─── */
+    .zone-middle {
+      width: 100%;
+      height: 675px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 48px 80px;
+    }
+
+    /* Calculation rows */
+    .calc-block {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .calc-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 0;
+    }
+
+    .calc-row-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: #888888;
+      letter-spacing: 0.3px;
+    }
+
+    .calc-row-value {
+      font-size: 30px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.5px;
+    }
+
+    /* Operator rows */
+    .operator-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 0;
+    }
+
+    .operator-minus {
+      font-size: 28px;
+      font-weight: 300;
+      color: #cccccc;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border: 2px solid #e8e8e8;
+      border-radius: 50%;
+    }
+
+    .operator-equals {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      background: #0D1B4B;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .operator-equals::before,
+    .operator-equals::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 2.5px;
+      background: #ffffff;
+      border-radius: 2px;
+    }
+
+    .operator-equals::before {
+      top: 17px;
+    }
+
+    .operator-equals::after {
+      bottom: 17px;
+    }
+
+    /* Divider line */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #EBEBEB;
+      margin: 4px 0;
+    }
+
+    /* Result box */
+    .result-box {
+      width: 100%;
+      background: #EEF4FF;
+      border-radius: 20px;
+      padding: 36px 48px;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      border: 1.5px solid #D0E0FF;
+    }
+
+    .result-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #2D6BE4, #5B8FFF);
+      border-radius: 20px 20px 0 0;
+    }
+
+    .result-eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #2D6BE4;
+      text-transform: uppercase;
+    }
+
+    .result-number {
+      font-size: 64px;
+      font-weight: 900;
+      color: #0D1B4B;
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+
+    .result-number span {
+      font-size: 36px;
+      font-weight: 600;
+      color: #2D6BE4;
+      letter-spacing: -0.5px;
+    }
+
+    .result-note {
+      font-size: 14px;
+      font-weight: 400;
+      color: #999999;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .result-note::before {
+      content: '';
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      background: #2D6BE4;
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+
+    /* ─── ZONE 3: CTA — 20% = 270px ─── */
+    .zone-cta {
+      width: 100%;
+      height: 270px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 80px;
+      gap: 24px;
+      border-top: 1px solid #EBEBEB;
+    }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .cta-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: #555555;
+      line-height: 1.5;
+      flex: 1;
+      max-width: 580px;
+    }
+
+    .cta-text strong {
+      color: #1a1a1a;
+      font-weight: 700;
+    }
+
+    .cta-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #0D1B4B;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 12px 24px;
+      border-radius: 100px;
+    }
+
+    .badge-time {
+      display: inline-flex;
+      align-items: center;
+      background: #2D6BE4;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      padding: 10px 20px;
+      border-radius: 100px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #7EB3FF;
+      border-radius: 50%;
+    }
+
+    /* Brand watermark */
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 80px;
+      position: absolute;
+      bottom: 28px;
+      left: 0;
+      right: 0;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0D1B4B;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.35;
+    }
+
+    .brand-tagline {
+      font-size: 12px;
+      font-weight: 400;
+      color: #aaaaaa;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="canvas">
+
+    <!-- ZONE 1: HEADER -->
+    <div class="zone-header">
+      <div class="header-eyebrow">Bài Toán Thực Tế</div>
+      <div class="header-title">1 ca <span>SmartVeneer</span></div>
+      <div class="header-subtitle">Nha sĩ thực sự nhận về bao nhiêu?</div>
+    </div>
+
+    <!-- ZONE 2: INFOGRAPHIC -->
+    <div class="zone-middle">
+      <div class="calc-block">
+
+        <!-- Row 1: Giá bán -->
+        <div class="calc-row">
+          <span class="calc-row-label">Giá bán cho bệnh nhân</span>
+          <span class="calc-row-value">25 – 35 triệu</span>
+        </div>
+
+        <!-- Operator: minus -->
+        <div class="operator-row">
+          <div class="operator-minus">−</div>
+        </div>
+
+        <!-- Row 2: Chi phí -->
+        <div class="calc-row">
+          <span class="calc-row-label">Chi phí vật liệu + labo</span>
+          <span class="calc-row-value">8 – 12 triệu</span>
+        </div>
+
+        <!-- Operator: equals -->
+        <div class="operator-row">
+          <div class="operator-equals"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Row 3: Result -->
+        <div class="result-box">
+          <div class="result-eyebrow">Margin Thực Tế</div>
+          <div class="result-number">
+            13 – 23 triệu
+            <span>/ ca</span>
+          </div>
+          <div class="result-note">Thời gian ghế: chỉ 2 – 3 tiếng</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ZONE 3: CTA -->
+    <div class="zone-cta">
+      <div class="cta-row">
+        <div class="cta-text">
+          Nghe <strong>bài toán đầy đủ</strong> tại webinar miễn phí —<br />
+          cùng các chuyên gia hàng đầu trong ngành
+        </div>
+        <div class="cta-badge">
+          <div class="badge-date">
+            <div class="badge-dot"></div>
+            03/04
+          </div>
+          <div class="badge-time">20:00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Brand watermark -->
+    <div class="brand-bar">
+      <span class="brand-name">DETEC · SmartVeneer</span>
+      <span class="brand-tagline">Webinar miễn phí · Đăng ký ngay</span>
+    </div>
+
+  </div>
+</body>
+</html>
