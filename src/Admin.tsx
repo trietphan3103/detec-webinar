@@ -58,6 +58,11 @@ async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
       ...opts.headers,
     },
   });
+  if (res.status === 401) {
+    clearToken();
+    window.location.href = '/admin';
+    throw new Error('Phiên đăng nhập hết hạn');
+  }
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
   return data;
