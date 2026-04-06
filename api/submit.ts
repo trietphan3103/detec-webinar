@@ -1,4 +1,7 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+
+type VercelRequest = IncomingMessage & { body: any; query: Record<string, string> };
+type VercelResponse = ServerResponse & { status: (code: number) => VercelResponse; json: (data: unknown) => void };
 
 async function sha256(value: string): Promise<string> {
   const encoder = new TextEncoder();
