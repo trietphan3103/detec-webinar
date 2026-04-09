@@ -25,7 +25,7 @@ interface SubmitLog {
   submitted_at: string;
 }
 
-type Tab = 'users' | 'submit-logs' | 'analytics';
+type Tab = 'users' | 'submit-logs' | 'analytics' | 'broadcast';
 
 // ─── Auth helpers ───
 function getToken() { return localStorage.getItem('detec_admin_token') || ''; }
@@ -1182,11 +1182,337 @@ function AnalyticsTab() {
   );
 }
 
+// ─── Broadcast Tab ───
+const TEMPLATE_KEY = 'detec_broadcast_templates';
+
+interface EmailTemplate {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+  savedAt: string;
+}
+
+function EditorToolbar({ onCmd }: { onCmd: (cmd: string, val?: string) => void }) {
+  const btn = (label: string, cmd: string, val?: string, title?: string) => (
+    <button
+      type="button"
+      onMouseDown={e => { e.preventDefault(); onCmd(cmd, val); }}
+      title={title || cmd}
+      className="px-2 py-1 rounded text-sm text-slate-600 hover:bg-slate-100 transition font-medium"
+    >
+      {label}
+    </button>
+  );
+  const insertLink = (e: MouseEvent) => {
+    e.preventDefault();
+    const url = prompt('Nhập URL:');
+    if (url) onCmd('createLink', url);
+  };
+  return (
+    <div className="flex flex-wrap gap-0.5 px-3 py-2 border-b border-slate-100 bg-slate-50">
+      {btn('B', 'bold', undefined, 'Đậm')}
+      {btn('I', 'italic', undefined, 'Nghiêng')}
+      {btn('U', 'underline', undefined, 'Gạch chân')}
+      {btn('S', 'strikeThrough', undefined, 'Gạch ngang')}
+      <span className="w-px bg-slate-200 mx-1 self-stretch" />
+      {btn('H1', 'formatBlock', 'h1')}
+      {btn('H2', 'formatBlock', 'h2')}
+      {btn('H3', 'formatBlock', 'h3')}
+      {btn('¶', 'formatBlock', 'p', 'Đoạn văn')}
+      <span className="w-px bg-slate-200 mx-1 self-stretch" />
+      {btn('• List', 'insertUnorderedList', undefined, 'Danh sách không thứ tự')}
+      {btn('1. List', 'insertOrderedList', undefined, 'Danh sách có thứ tự')}
+      <span className="w-px bg-slate-200 mx-1 self-stretch" />
+      <button
+        type="button"
+        onMouseDown={insertLink}
+        title="Chèn link"
+        className="px-2 py-1 rounded text-sm text-slate-600 hover:bg-slate-100 transition"
+      >
+        🔗
+      </button>
+      {btn('—', 'insertHorizontalRule', undefined, 'Đường kẻ ngang')}
+      <span className="w-px bg-slate-200 mx-1 self-stretch" />
+      <button
+        type="button"
+        onMouseDown={e => { e.preventDefault(); onCmd('removeFormat'); }}
+        title="Xóa định dạng"
+        className="px-2 py-1 rounded text-sm text-slate-400 hover:bg-slate-100 transition"
+      >
+        Tx
+      </button>
+    </div>
+  );
+}
+
+function BroadcastTab() {
+  const [subject, setSubject] = useState('');
+  const [body, setBody] = useState('');
+  const [preview, setPreview] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [templates, setTemplates] = useState<EmailTemplate[]>(() => {
+    try { return JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'); } catch { return []; }
+  });
+  const [templateName, setTemplateName] = useState('');
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [previewTpl, setPreviewTpl] = useState<EmailTemplate | null>(null);
+  const [sending, setSending] = useState(false);
+  const [sendResult, setSendResult] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  const saveTemplates = (list: EmailTemplate[]) => {
+    setTemplates(list);
+    localStorage.setItem(TEMPLATE_KEY, JSON.stringify(list));
+  };
+
+  const handleSaveTemplate = () => {
+    if (!templateName.trim()) return;
+    const tpl: EmailTemplate = {
+      id: Date.now().toString(),
+      name: templateName.trim(),
+      subject,
+      body,
+      savedAt: new Date().toLocaleString('vi-VN'),
+    };
+    saveTemplates([tpl, ...templates]);
+    setTemplateName('');
+    setShowSaveModal(false);
+  };
+
+  const execCmd = (cmd: string, val?: string) => {
+    document.execCommand(cmd, false, val);
+    if (editorRef.current) setBody(editorRef.current.innerHTML);
+    editorRef.current?.focus();
+  };
+
+  const handleLoadTemplate = (tpl: EmailTemplate) => {
+    setSubject(tpl.subject);
+    setBody(tpl.body);
+    if (editorRef.current) editorRef.current.innerHTML = tpl.body;
+  };
+
+  const handleDeleteTemplate = (id: string) => {
+    saveTemplates(templates.filter(t => t.id !== id));
+  };
+
+  const handleSend = async () => {
+    setShowConfirm(false);
+    setSending(true);
+    setSendResult(null);
+    try {
+      await api('/admin/users/broadcast-email', {
+        method: 'POST',
+        body: JSON.stringify({ subject, body }),
+      });
+      setSendResult({ ok: true, msg: 'Gửi thành công!' });
+    } catch (e: any) {
+      setSendResult({ ok: false, msg: e.message || 'Gửi thất bại' });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <style>{`[contenteditable]:empty:before{content:attr(data-placeholder);color:#94a3b8;pointer-events:none}`}</style>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-slate-800">Broadcast Email</h2>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setPreview(v => !v)}
+            className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 transition"
+          >
+            {preview ? 'Editor' : 'Preview HTML'}
+          </button>
+          <button
+            onClick={() => setShowSaveModal(true)}
+            disabled={!subject && !body}
+            className="px-3 py-1.5 text-sm border border-blue-300 rounded-lg text-blue-600 hover:bg-blue-50 transition disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Lưu mẫu
+          </button>
+          <button
+            onClick={() => setShowConfirm(true)}
+            disabled={!subject.trim() || !body.trim() || sending}
+            className="px-4 py-1.5 text-sm bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {sending ? 'Đang gửi...' : 'Gửi tất cả'}
+          </button>
+        </div>
+      </div>
+
+      {sendResult && (
+        <div className={`px-4 py-3 rounded-lg text-sm font-medium ${sendResult.ok ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+          {sendResult.msg}
+        </div>
+      )}
+
+      {/* Composer */}
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        {/* Subject */}
+        <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
+          <span className="text-xs text-slate-400 font-medium w-14 flex-shrink-0">Tiêu đề</span>
+          <input
+            value={subject}
+            onChange={e => setSubject(e.target.value)}
+            placeholder="Nhập tiêu đề email..."
+            className="flex-1 text-sm font-medium text-slate-800 outline-none placeholder:text-slate-400"
+          />
+        </div>
+        {/* Toolbar */}
+        {!preview && <EditorToolbar onCmd={execCmd} />}
+        {/* Body */}
+        {preview ? (
+          <div
+            className="p-5 min-h-[400px] prose max-w-none text-sm"
+            dangerouslySetInnerHTML={{ __html: body }}
+          />
+        ) : (
+          <div
+            ref={editorRef}
+            contentEditable
+            suppressContentEditableWarning
+            onInput={() => { if (editorRef.current) setBody(editorRef.current.innerHTML); }}
+            className="min-h-[400px] p-5 text-sm text-slate-700 outline-none"
+            style={{ lineHeight: '1.7' }}
+            data-placeholder="Nhập nội dung email..."
+          />
+        )}
+      </div>
+
+      {/* Templates */}
+      {templates.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-slate-600 mb-2">Mẫu đã lưu</h3>
+          <div className="grid gap-2">
+            {templates.map(tpl => (
+              <div key={tpl.id} className="flex items-center justify-between bg-white border border-slate-200 rounded-lg px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-slate-800">{tpl.name}</p>
+                  <p className="text-xs text-slate-400">{tpl.subject} · {tpl.savedAt}</p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setPreviewTpl(tpl)}
+                    className="text-xs text-slate-500 hover:text-slate-800 hover:underline"
+                  >
+                    Xem
+                  </button>
+                  <button
+                    onClick={() => handleLoadTemplate(tpl)}
+                    className="text-xs text-blue-600 hover:underline"
+                  >
+                    Dùng
+                  </button>
+                  <button
+                    onClick={() => handleDeleteTemplate(tpl.id)}
+                    className="text-xs text-red-500 hover:underline"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Template preview modal */}
+      {previewTpl && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 flex-shrink-0">
+              <div>
+                <p className="text-xs text-slate-400 uppercase tracking-wide font-medium mb-0.5">Xem mẫu</p>
+                <h3 className="font-semibold text-slate-800">{previewTpl.name}</h3>
+              </div>
+              <button onClick={() => setPreviewTpl(null)} className="text-slate-400 hover:text-slate-700 transition text-xl leading-none">✕</button>
+            </div>
+            {/* Email meta */}
+            <div className="px-5 py-3 border-b border-slate-100 bg-slate-50 flex-shrink-0 space-y-1.5">
+              <div className="flex gap-2 text-sm">
+                <span className="text-slate-400 w-16 flex-shrink-0">Tiêu đề:</span>
+                <span className="text-slate-800 font-medium">{previewTpl.subject || <span className="italic text-slate-400">Chưa có</span>}</span>
+              </div>
+              <div className="flex gap-2 text-xs text-slate-400">
+                <span className="w-16 flex-shrink-0">Lưu lúc:</span>
+                <span>{previewTpl.savedAt}</span>
+              </div>
+            </div>
+            {/* Body */}
+            <div className="overflow-y-auto flex-1 p-5">
+              {previewTpl.body
+                ? <div dangerouslySetInnerHTML={{ __html: previewTpl.body }} className="prose max-w-none text-sm" />
+                : <p className="text-slate-400 italic text-sm">Không có nội dung.</p>
+              }
+            </div>
+            {/* Footer */}
+            <div className="flex gap-2 justify-end px-5 py-4 border-t border-slate-100 flex-shrink-0">
+              <button onClick={() => setPreviewTpl(null)} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg transition">Đóng</button>
+              <button
+                onClick={() => { handleLoadTemplate(previewTpl); setPreviewTpl(null); }}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition"
+              >
+                Dùng mẫu này
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save modal */}
+      {showSaveModal && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 space-y-4">
+            <h3 className="font-semibold text-slate-800">Lưu mẫu email</h3>
+            <input
+              autoFocus
+              value={templateName}
+              onChange={e => setTemplateName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSaveTemplate()}
+              placeholder="Tên mẫu..."
+              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+            />
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setShowSaveModal(false)} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg transition">Hủy</button>
+              <button onClick={handleSaveTemplate} disabled={!templateName.trim()} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition disabled:opacity-40">Lưu</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm modal */}
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 text-orange-600 text-lg">!</div>
+              <div>
+                <h3 className="font-semibold text-slate-800">Xác nhận gửi broadcast</h3>
+                <p className="text-sm text-slate-500 mt-1">
+                  Email sẽ được gửi đến <strong>toàn bộ học viên</strong> trong hệ thống. Bạn có chắc muốn gửi không?
+                </p>
+                <p className="text-xs text-slate-400 mt-2">Tiêu đề: <span className="font-medium text-slate-600">{subject}</span></p>
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setShowConfirm(false)} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg transition">Không</button>
+              <button onClick={handleSend} className="px-4 py-2 text-sm bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition">Có, gửi ngay</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Dashboard ───
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const getTabFromHash = (): Tab => {
     const h = window.location.hash.slice(1) as Tab;
-    return ['users', 'submit-logs', 'analytics'].includes(h) ? h : 'users';
+    return ['users', 'submit-logs', 'analytics', 'broadcast'].includes(h) ? h : 'users';
   };
   const [tab, setTab] = useState<Tab>(getTabFromHash);
 
@@ -1227,6 +1553,12 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               >
                 Analytics
               </button>
+              <button
+                onClick={() => switchTab('broadcast')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${tab === 'broadcast' ? 'bg-primary text-white' : 'text-slate-600 hover:bg-slate-100'}`}
+              >
+                Broadcast Email
+              </button>
             </nav>
           </div>
           <button onClick={onLogout} className="text-sm text-slate-500 hover:text-red-500 font-medium transition">
@@ -1237,7 +1569,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-        {tab === 'users' ? <UsersTab /> : tab === 'submit-logs' ? <SubmitLogsTab /> : <AnalyticsTab />}
+        {tab === 'users' ? <UsersTab /> : tab === 'submit-logs' ? <SubmitLogsTab /> : tab === 'analytics' ? <AnalyticsTab /> : <BroadcastTab />}
       </main>
     </div>
   );
